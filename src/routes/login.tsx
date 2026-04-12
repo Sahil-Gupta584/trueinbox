@@ -48,7 +48,7 @@ function SignIn() {
       // Assuming signIn.magicLink is used for magic links in better-auth
       const res = await signIn.magicLink({
         email,
-        callbackURL: "/dashboard",
+        callbackURL: "/me",
       });
       
       if (res?.error) {

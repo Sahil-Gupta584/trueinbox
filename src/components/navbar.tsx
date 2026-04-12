@@ -2,18 +2,13 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useSession, signOut } from '../lib/auth-client'
 import {
   LayoutDashboard,
-  MessageSquare,
   Users,
   User,
   LogOut,
   ChevronDown,
-  Settings,
-  Sun,
-  Moon,
-  Bell,
   MessageSquareText,
 } from 'lucide-react'
-import { getTheme, setTheme, isDark } from '../lib/theme'
+import { setTheme, isDark } from '../lib/theme'
 import { Logo } from './logo'
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { Link, useLocation, useRouter } from '@tanstack/react-router'
@@ -36,7 +31,7 @@ const tabRoutes = [
 
 const navRoutes = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/messages', label: 'Inbox', icon: MessageSquare },
+  { href: '/messages', label: 'Inbox', icon: MessageSquareText },
   { href: '/creators', label: 'Creators', icon: Users },
   { href: '/me', label: 'My Profile', icon: User },
 ]
@@ -120,8 +115,6 @@ function UserDropdown() {
   const user = session?.user
 
   if (!user) {
-    console.log({ session, error });
-
     return null
   }
 

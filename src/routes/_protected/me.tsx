@@ -1,18 +1,9 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../lib/auth-client'
 import { api } from '../../lib/api'
-import {
-  Save,
-  User as UserIcon,
-  DollarSign,
-  BadgeCheck,
-  ImagePlus,
-  Twitter,
-  Instagram,
-  Youtube,
-  Loader2,
-} from 'lucide-react'
+import { Twitter, Instagram, Youtube, Loader2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -41,6 +32,7 @@ import {
   InputGroupText,
 } from '../../components/ui/input-group'
 import { Input } from '#/components/ui/input'
+import { SectionCard } from '#/components/SectionCard'
 
 export const Route = createFileRoute('/_protected/me')({
   component: ProfileSettings,
@@ -96,9 +88,9 @@ niches.forEach((n, i) => {
 type Platform = {
   key: 'socialTwitter' | 'socialInstagram' | 'socialYoutube'
   audienceKey:
-  | 'socialTwitterAudience'
-  | 'socialInstagramAudience'
-  | 'socialYoutubeAudience'
+    | 'socialTwitterAudience'
+    | 'socialInstagramAudience'
+    | 'socialYoutubeAudience'
   label: string
   icon: any
   placeholder: string
@@ -127,27 +119,6 @@ const platforms: Platform[] = [
     placeholder: '@channel',
   },
 ]
-
-function SectionCard({ icon, title, subtitle, children }) {
-  return (
-    <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-      <div className="px-6 py-5 border-b border-stone-100 flex items-start gap-3">
-        <span className="text-base mt-0.5 opacity-70">{icon}</span>
-        <div>
-          <h2 className="text-sm font-semibold text-stone-800 tracking-tight">
-            {title}
-          </h2>
-          {subtitle && (
-            <p className="text-xs text-stone-400 mt-0.5 leading-relaxed">
-              {subtitle}
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="px-6 py-5 space-y-5">{children}</div>
-    </div>
-  )
-}
 
 function Label({ children, hint }) {
   return (
@@ -193,10 +164,11 @@ function Textarea({ ...props }) {
 function PriceInput({ value, onChange, highlighted, label, description }) {
   return (
     <div
-      className={`rounded-xl border p-4 transition-all duration-150 ${highlighted
-        ? 'border-emerald-300 bg-emerald-50/60'
-        : 'border-stone-200 bg-stone-50/50'
-        }`}
+      className={`rounded-xl border p-4 transition-all duration-150 ${
+        highlighted
+          ? 'border-emerald-300 bg-emerald-50/60'
+          : 'border-stone-200 bg-stone-50/50'
+      }`}
     >
       <div className="flex items-start justify-between mb-3">
         <div>
@@ -226,9 +198,10 @@ function PriceInput({ value, onChange, highlighted, label, description }) {
           onChange={onChange}
           className={`w-full pl-7 pr-3 py-2.5 rounded-lg text-sm font-semibold border
             focus:outline-none focus:ring-2 transition-all duration-150
-            ${highlighted
-              ? 'bg-white border-emerald-300 text-emerald-800 focus:ring-emerald-600/20 focus:border-emerald-600'
-              : 'bg-white border-stone-200 text-stone-800 focus:ring-emerald-600/20 focus:border-emerald-600'
+            ${
+              highlighted
+                ? 'bg-white border-emerald-300 text-emerald-800 focus:ring-emerald-600/20 focus:border-emerald-600'
+                : 'bg-white border-stone-200 text-stone-800 focus:ring-emerald-600/20 focus:border-emerald-600'
             }`}
         />
       </div>
@@ -251,13 +224,13 @@ type FormState = {
   socialYoutubeAudience: string
 }
 
-export default function ProfileSettings() {
+function ProfileSettings() {
   const { data: session } = useSession()
   const [imageModalOpen, setImageModalOpen] = useState(false)
   const [imageInput, setImageInput] = useState('')
-  const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [formInitialized, setFormInitialized] = useState(false)
 
   const [form, setForm] = useState<FormState>({
     username: '',
@@ -279,6 +252,49 @@ export default function ProfileSettings() {
   const [countryResults, setCountryResults] = useState<any[]>([])
   const [countryLoading, setCountryLoading] = useState(false)
   const [countryCode, setCountryCode] = useState('')
+
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => api.me(),
+  })
+
+  const queryClient = useQueryClient()
+
+  const updateImageMutation = useMutation({
+    mutationFn: (image: string) => api.updateMe({ image }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] })
+      setImageModalOpen(false)
+      setImageInput('')
+    },
+  })
+
+  // Initialize form when user data loads
+  useEffect(() => {
+    if (user && !formInitialized) {
+      setForm({
+        username: user.username || '',
+        bio: user.bio || '',
+        niche: user.niche ? user.niche.split(',').filter(Boolean) : [],
+        country: user.country || '',
+        dmPrice: user.dmPrice ? String(user.dmPrice) : '0',
+        guaranteedReplyPrice: user.guaranteedReplyPrice
+          ? String(user.guaranteedReplyPrice)
+          : '0',
+        socialTwitter: user.socialTwitter || '',
+        socialTwitterAudience: user.socialTwitterAudience || '',
+        socialInstagram: user.socialInstagram || '',
+        socialInstagramAudience: user.socialInstagramAudience || '',
+        socialYoutube: user.socialYoutube || '',
+        socialYoutubeAudience: user.socialYoutubeAudience || '',
+      })
+      setProfileImage(user.image || null)
+      if (user.country) {
+        setCountryCode(user.country)
+      }
+      setFormInitialized(true)
+    }
+  }, [user, formInitialized])
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -302,37 +318,13 @@ export default function ProfileSettings() {
     return () => clearTimeout(timer)
   }, [countrySearch])
 
-  useEffect(() => {
-    api
-      .me()
-      .then((u) => {
-        setForm({
-          username: u.username || '',
-          bio: u.bio || '',
-          niche: u.niche ? u.niche.split(',').filter(Boolean) : [],
-          country: u.country || '',
-          dmPrice: u.dmPrice ? String(u.dmPrice) : '0',
-          guaranteedReplyPrice: u.guaranteedReplyPrice
-            ? String(u.guaranteedReplyPrice)
-            : '0',
-          socialTwitter: u.socialTwitter || '',
-          socialTwitterAudience: u.socialTwitterAudience || '',
-          socialInstagram: u.socialInstagram || '',
-          socialInstagramAudience: u.socialInstagramAudience || '',
-          socialYoutube: u.socialYoutube || '',
-          socialYoutubeAudience: u.socialYoutubeAudience || '',
-        })
-        setProfileImage(u.image || null)
-        if (u.country) {
-          setCountryCode(u.country)
-        }
-      })
-      .finally(() => setLoading(false))
-  }, [])
-
   const set =
     (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((f) => ({ ...f, [key]: e.target.value }))
+
+  const setSocial =
+    (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm((f) => ({ ...f, [key]: e.target.value.replace(/@/g, '') }))
 
   const handleSave = async () => {
     setSaving(true)
@@ -358,9 +350,8 @@ export default function ProfileSettings() {
   const handleImageSubmit = () => {
     if (imageInput.trim()) {
       setProfileImage(imageInput.trim())
+      updateImageMutation.mutate(imageInput.trim())
     }
-    setImageModalOpen(false)
-    setImageInput('')
   }
 
   const handlePasteImage = async () => {
@@ -391,7 +382,7 @@ export default function ProfileSettings() {
   const charCount = form.bio.length
   const bioMax = 200
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="pt-14 flex items-center justify-center h-64">
         <div className="w-6 h-6 rounded-full border-2 border-emerald-600 border-t-transparent animate-spin" />
@@ -402,10 +393,9 @@ export default function ProfileSettings() {
   const avatarLetter = session?.user?.name?.charAt(0).toUpperCase() || '?'
 
   return (
-    <div className=" bg-stone-50" style={{ fontFamily: "'Geist', sans-serif" }}>
+    <div >
       {/* Page */}
-      <div className="pt-14 pb-24">
-        <div className="max-w-xl mx-auto">
+      <div className="space-y-4">
           {/* Page header */}
           <div className="mb-8">
             <h1
@@ -453,7 +443,6 @@ export default function ProfileSettings() {
             </div>
           </div>
 
-          <div className="space-y-5">
             {/* Basic Info */}
             <SectionCard
               icon="◉"
@@ -598,46 +587,42 @@ export default function ProfileSettings() {
               title="Social Links"
               subtitle="Connect your platforms so sponsors can see your full reach."
             >
-              {platforms.map((p) => {
-                return (
-                  <div key={p.key} className="space-y-3">
-                    <Field>
-                      <FieldLabel>{p.label}</FieldLabel>
-                      <InputGroup>
-                        <InputGroupAddon>
-                          <p.icon className="text-stone-400 size-4" />
-                        </InputGroupAddon>
-                        <InputGroupInput
-                          value={form[p.key]}
-                          onChange={set(p.key)}
-                          placeholder={p.placeholder}
-                        />
-                      </InputGroup>
-                    </Field>
-                    <Input/>
-                    {/* <Field>
-                      <FieldLabel>{p.label}</FieldLabel>
-
-                        <InputGroupText>followers more than</InputGroupText>
-                        <InputGroupInput
-                          type="number"
-                          min="0"
-                          step="1"
-                          value={form[p.audienceKey]}
-                          onChange={(e) => {
-                            const value = e.target.value
-                            // Only allow whole numbers
-                            if (value === '' || /^\d+$/.test(value)) {
-                              set(p.audienceKey)(e)
-                            }
-                          }}
-                          placeholder="0"
-                          className="w-24"
-                        />
-                    </Field> */}
-                  </div>
-                )
-              })}
+              {platforms.map((p) => (
+                <div key={p.key} className="flex gap-4">
+                  <Field>
+                    <FieldLabel>{p.label}</FieldLabel>
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <p.icon className="text-stone-400 size-4" />
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        value={form[p.key]}
+                        onChange={setSocial(p.key)}
+                        placeholder={p.placeholder}
+                      />
+                    </InputGroup>
+                  </Field>
+                  <Field>
+                    <FieldLabel>followers more than</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={form[p.audienceKey]}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          // Only allow whole numbers
+                          if (value === '' || /^\d+$/.test(value)) {
+                            set(p.audienceKey)(e)
+                          }
+                        }}
+                        placeholder="0"
+                      />
+                    </InputGroup>
+                  </Field>
+                </div>
+              ))}
             </SectionCard>
 
             {/* Danger zone */}
@@ -661,16 +646,14 @@ export default function ProfileSettings() {
                 </button>
               </div>
             </details>
-          </div>
-        </div>
       </div>
 
       {/* Sticky save bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-stone-200 px-4 py-4">
-        <div className="max-w-xl mx-auto flex items-center gap-3">
+        <div className="max-w-xl mx-auto  items-center gap-3">
           <div className="flex-1">
             {saved && (
-              <p className="text-xs text-emerald-700 font-medium flex items-center gap-1.5 animate-pulse">
+              <p className="text-xs flex justify-center text-emerald-700 font-medium  items-center gap-1.5 animate-pulse">
                 <span>✓</span> Profile saved successfully!
               </p>
             )}
@@ -679,11 +662,12 @@ export default function ProfileSettings() {
             onClick={handleSave}
             disabled={saving}
             className={`flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-200 w-full justify-center
-              ${saving
-                ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
-                : saved
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/25'
-                  : 'bg-stone-900 hover:bg-emerald-700 text-white shadow-lg shadow-stone-900/15 hover:shadow-emerald-700/25 hover:-translate-y-0.5'
+              ${
+                saving
+                  ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
+                  : saved
+                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/25'
+                    : 'bg-stone-900 hover:bg-emerald-700 text-white shadow-lg shadow-stone-900/15 hover:shadow-emerald-700/25 hover:-translate-y-0.5'
               }`}
           >
             {saving ? (
@@ -743,9 +727,18 @@ export default function ProfileSettings() {
               type="text"
               value={imageInput}
               onChange={(e) => setImageInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && imageInput.trim()) {
+                  handleImageSubmit()
+                }
+              }}
               placeholder="Paste image URL here..."
               className="w-full bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder-stone-400 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600"
             />
+            <p className="text-xs text-stone-400 leading-relaxed">
+              Tip: Right-click your profile picture on Twitter, Instagram, or
+              LinkedIn and select "Copy image address" to get the URL.
+            </p>
             {imageInput && (
               <div className="flex justify-center">
                 <img
@@ -758,10 +751,19 @@ export default function ProfileSettings() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={handlePasteImage}>
+            <Button
+              variant="outline"
+              onClick={handlePasteImage}
+              disabled={updateImageMutation.isPending}
+            >
               Paste from Clipboard
             </Button>
-            <Button onClick={handleImageSubmit}>Save Photo</Button>
+            <Button
+              onClick={handleImageSubmit}
+              isLoading={updateImageMutation.isPending}
+            >
+              Save Photo
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

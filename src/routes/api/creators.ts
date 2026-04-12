@@ -11,20 +11,7 @@ export const Route = createFileRoute('/api/creators')({
         const pageStr = url.searchParams.get('page') || '1'
         const page = parseInt(pageStr)
         const creators = await db
-          .select({
-            id: userSchema.id,
-            name: userSchema.name,
-            username: userSchema.username,
-            bio: userSchema.bio,
-            niche: userSchema.niche,
-            dmPrice: userSchema.dmPrice,
-            guaranteedReplyPrice: userSchema.guaranteedReplyPrice,
-            socialTwitter: userSchema.socialTwitter,
-            socialInstagram: userSchema.socialInstagram,
-            socialYoutube: userSchema.socialYoutube,
-            followerCount: userSchema.followerCount,
-            image: userSchema.image,
-          })
+          .select()
           .from(userSchema)
           .limit(20)
           .offset((page - 1) * 20)

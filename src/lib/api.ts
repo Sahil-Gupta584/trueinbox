@@ -1,3 +1,5 @@
+import type { User } from "#/db/types";
+
 const BASE = '/api'
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -8,6 +10,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }))
+    console.log(err);
+    
     throw new Error((err as { message: string }).message || 'Request failed')
   }
   return res.json() as Promise<T>
@@ -18,9 +22,9 @@ export const api = {
   updateMe: (data: Partial<User>) =>
     request<User>('/me', { method: 'PATCH', body: JSON.stringify(data) }),
 
-  creators: (page = 1) => request<Creator[]>(`/creators?page=${page}`),
+  creators: (page = 1) => request<User[]>(`/creators?page=${page}`),
   creatorByUsername: (username: string) =>
-    request<Creator>(`/creators/${username}`),
+    request<User>(`/creators/${username}`),
 
   conversations: () => request<ConversationWithMeta[]>('/conversations'),
   startConversation: (
@@ -55,46 +59,7 @@ export const api = {
   unread: () => request<UnreadConversation[]>('/unread'),
 }
 
-// ── Types ────────────────────────────────────────────────────────────────
-export interface User {
-  id: string
-  name: string | null
-  email: string
-  username: string | null
-  bio: string | null
-  niche: string | null
-  country: string | null
-  dmPrice: number | null
-  guaranteedReplyPrice: number | null
-  socialTwitter: string | null
-  socialTwitterAudience: string | null
-  socialInstagram: string | null
-  socialInstagramAudience: string | null
-  socialYoutube: string | null
-  socialYoutubeAudience: string | null
-  followerCount: string | null
-  image: string | null
-  walletBalance: number | null
-}
 
-export interface Creator {
-  id: string
-  name: string | null
-  username: string | null
-  bio: string | null
-  niche: string | null
-  country: string | null
-  dmPrice: number | null
-  guaranteedReplyPrice: number | null
-  socialTwitter: string | null
-  socialTwitterAudience: string | null
-  socialInstagram: string | null
-  socialInstagramAudience: string | null
-  socialYoutube: string | null
-  socialYoutubeAudience: string | null
-  followerCount: string | null
-  image: string | null
-}
 
 export interface Conversation {
   id: string

@@ -13,7 +13,6 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileUsernameRouteImport } from './routes/profile/$username'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
@@ -52,11 +51,6 @@ const ProtectedRoute = ProtectedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
-  id: '/profile/$username',
-  path: '/profile/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
@@ -182,7 +176,6 @@ export interface FileRoutesByFullPath {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creators/$username': typeof ApiCreatorsUsernameRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
@@ -208,7 +201,6 @@ export interface FileRoutesByTo {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creators/$username': typeof ApiCreatorsUsernameRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
@@ -236,7 +228,6 @@ export interface FileRoutesById {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creators/$username': typeof ApiCreatorsUsernameRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
@@ -264,7 +255,6 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
-    | '/profile/$username'
     | '/api/auth/$'
     | '/api/creators/$username'
     | '/api/conversations/$id/messages'
@@ -290,7 +280,6 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
-    | '/profile/$username'
     | '/api/auth/$'
     | '/api/creators/$username'
     | '/api/conversations/$id/messages'
@@ -317,7 +306,6 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
-    | '/profile/$username'
     | '/api/auth/$'
     | '/api/creators/$username'
     | '/api/conversations/$id/messages'
@@ -339,7 +327,6 @@ export interface RootRouteChildren {
   DemoBetterAuthRoute: typeof DemoBetterAuthRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  ProfileUsernameRoute: typeof ProfileUsernameRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -371,13 +358,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile/$username': {
-      id: '/profile/$username'
-      path: '/profile/$username'
-      fullPath: '/profile/$username'
-      preLoaderRoute: typeof ProfileUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/tanstack-query': {
@@ -585,7 +565,6 @@ const rootRouteChildren: RootRouteChildren = {
   DemoBetterAuthRoute: DemoBetterAuthRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  ProfileUsernameRoute: ProfileUsernameRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

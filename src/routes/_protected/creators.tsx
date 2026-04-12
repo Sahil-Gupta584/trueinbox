@@ -1,20 +1,32 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { api, type Creator } from '../../lib/api'
+import { api } from '../../lib/api'
 import {
   Search,
   Users,
-  MessageSquare,
+  MessageSquareText,
   DollarSign,
   BadgeCheck,
   X,
   ArrowRight,
   Sparkles,
 } from 'lucide-react'
+import type { User } from '#/db/types'
 
 export const Route = createFileRoute('/_protected/creators')({
   component: Creators,
 })
+
+// Utility function to format large numbers (10000 → 10k+)
+function formatCount(num: number | string | null | undefined): string {
+  if (num === null || num === undefined || num === '') return ''
+  const n = typeof num === 'string' ? parseInt(num, 10) : num
+  if (isNaN(n) || n === 0) return ''
+  if (n >= 1_000_000)
+    return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M+`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k+`
+  return `${n}+`
+}
 
 const NICHES = [
   'All',
@@ -42,20 +54,21 @@ function Avatar({
     size === 'sm'
       ? 'w-9 h-9 text-sm'
       : size === 'lg'
-        ? 'w-16 h-16 text-xl'
+        ? 'w-14 h-14 text-xl'
         : 'w-11 h-11 text-base'
   if (image)
     return (
       <img
         src={image}
         referrerPolicy="no-referrer"
-        className={`${sz} rounded-full object-cover flex-shrink-0 ring-2 ring-border`}
+        className={`${sz} rounded-full object-cover flex-shrink-0 ring-2 ring-stone-100`}
         alt={name || ''}
       />
     )
   return (
     <div
-      className={`${sz} rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary flex-shrink-0`}
+      className={`${sz} rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 ring-2 ring-stone-100`}
+      style={{ background: '#2d6a4f' }}
     >
       {name?.charAt(0).toUpperCase() || '?'}
     </div>
@@ -110,25 +123,23 @@ function SendDMModal({
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm animate-fade-in" />
+      <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm" />
 
-      <div className="relative bg-card rounded-t-3xl sm:rounded-3xl border border-border shadow-2xl w-full max-w-md animate-fade-up z-10">
+      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl border border-stone-200 shadow-2xl w-full max-w-md z-10">
         {/* Header */}
-        <div className="flex items-center gap-3 p-5 border-b border-border">
+        <div className="flex items-center gap-3 p-5 border-b border-stone-100">
           <Avatar name={creator.name} image={creator.image} />
           <div className="flex-1">
-            <p className=" font-bold text-foreground">{creator.name}</p>
+            <p className="font-semibold text-stone-800">{creator.name}</p>
             {creator.niche && (
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {creator.niche}
-              </p>
+              <p className="text-xs text-stone-400 mt-0.5">{creator.niche}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-xl bg-muted hover:bg-border flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center transition-colors"
           >
-            <X className="w-4 h-4 text-muted-foreground" />
+            <X className="w-4 h-4 text-stone-500" />
           </button>
         </div>
 
@@ -137,44 +148,46 @@ function SendDMModal({
           {(creator.dmPrice ?? 0) > 0 &&
             (creator.guaranteedReplyPrice ?? 0) > 0 && (
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
+                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2.5">
                   Message type
                 </label>
                 <div className="grid grid-cols-2 gap-2.5">
                   <button
                     onClick={() => setType('paywall')}
-                    className={`p-3.5 rounded-2xl border text-left transition-all ${type === 'paywall'
-                        ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                        : 'border-border hover:border-primary/30 hover:bg-muted/50'
-                      }`}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      type === 'paywall'
+                        ? 'border-emerald-300 bg-emerald-50 ring-1 ring-emerald-200'
+                        : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50'
+                    }`}
                   >
-                    <p className="text-xs font-bold text-foreground">
+                    <p className="text-xs font-semibold text-stone-700">
                       Send a DM
                     </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                    <p className="text-[10px] text-stone-400 mt-0.5 leading-tight">
                       Pay to reach · may refund
                     </p>
-                    <p className="font-mono-nums text-base font-bold text-primary mt-2">
+                    <p className="text-base font-bold text-stone-800 mt-2">
                       ${creator.dmPrice ?? 0}
                     </p>
                   </button>
                   <button
                     onClick={() => setType('guaranteed')}
-                    className={`p-3.5 rounded-2xl border text-left transition-all ${type === 'guaranteed'
-                        ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                        : 'border-border hover:border-primary/30 hover:bg-muted/50'
-                      }`}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      type === 'guaranteed'
+                        ? 'border-emerald-400 bg-gradient-to-br from-emerald-50 to-emerald-100 ring-1 ring-emerald-300'
+                        : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50'
+                    }`}
                   >
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <BadgeCheck className="w-3.5 h-3.5 text-primary" />
-                      <p className="text-xs font-bold text-foreground">
-                        Guaranteed Reply
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                      <p className="text-xs font-semibold text-stone-700">
+                        Guaranteed
                       </p>
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                    <p className="text-[10px] text-stone-400 mt-0.5 leading-tight">
                       Creator must reply
                     </p>
-                    <p className="font-mono-nums text-base font-bold text-primary mt-2">
+                    <p className="text-base font-bold text-emerald-700 mt-2">
                       ${creator.guaranteedReplyPrice ?? 0}
                     </p>
                   </button>
@@ -183,22 +196,24 @@ function SendDMModal({
             )}
 
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
               Subject{' '}
-              <span className="font-normal normal-case">(optional)</span>
+              <span className="font-normal normal-case text-stone-400">
+                (optional)
+              </span>
             </label>
             <input
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="e.g. Collab proposal, Quick question…"
-              className="input-base"
+              placeholder="e.g. Collab proposal, Quick question..."
+              className="w-full bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder-stone-400 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              Message *
+            <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
+              Message <span className="text-red-500">*</span>
             </label>
             <textarea
               value={message}
@@ -206,30 +221,33 @@ function SendDMModal({
               rows={5}
               placeholder={
                 type === 'guaranteed'
-                  ? 'Ask your question or describe what you need clearly…'
-                  : 'Introduce yourself and your proposal…'
+                  ? 'Ask your question or describe what you need clearly...'
+                  : 'Introduce yourself and your proposal...'
               }
-              className="input-base resize-none"
+              className="w-full bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder-stone-400 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all resize-none"
             />
           </div>
 
           {error && (
-            <div className="px-3.5 py-2.5 bg-destructive/8 border border-destructive/20 rounded-xl text-xs text-destructive">
+            <div className="px-3.5 py-2.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600">
               {error}
             </div>
           )}
 
           <div
-            className={`flex items-start gap-3 p-3.5 rounded-2xl border ${type === 'guaranteed'
-                ? 'bg-primary/5 border-primary/20'
-                : 'bg-muted/50 border-border'
-              }`}
+            className={`flex items-start gap-3 p-3.5 rounded-xl border ${
+              type === 'guaranteed'
+                ? 'bg-emerald-50 border-emerald-200'
+                : 'bg-stone-50 border-stone-200'
+            }`}
           >
-            <DollarSign className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <DollarSign
+              className={`w-4 h-4 flex-shrink-0 mt-0.5 ${type === 'guaranteed' ? 'text-emerald-600' : 'text-stone-500'}`}
+            />
+            <p className="text-xs text-stone-600 leading-relaxed">
               {type === 'guaranteed' ? (
                 <>
-                  <span className="font-semibold text-foreground">
+                  <span className="font-semibold text-emerald-700">
                     ${price} fee
                   </span>{' '}
                   — {creator.name?.split(' ')[0]} is obligated to reply
@@ -237,7 +255,7 @@ function SendDMModal({
                 </>
               ) : (
                 <>
-                  <span className="font-semibold text-foreground">
+                  <span className="font-semibold text-stone-700">
                     ${price} fee
                   </span>{' '}
                   — paid to reach their inbox. Creator can refund if they
@@ -251,19 +269,23 @@ function SendDMModal({
         <div className="flex gap-3 px-5 pb-5">
           <button
             onClick={onClose}
-            className="flex-1 py-3 border border-border text-muted-foreground text-sm font-medium rounded-2xl hover:bg-muted transition-all"
+            className="flex-1 py-3 border border-stone-200 text-stone-600 text-sm font-medium rounded-xl hover:bg-stone-50 transition-all"
           >
             Cancel
           </button>
           <button
             onClick={handleSend}
             disabled={!message.trim() || loading}
-            className="flex-1 py-3 bg-primary text-primary-foreground text-sm font-bold rounded-2xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed glow-primary-sm"
+            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+              type === 'guaranteed'
+                ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:from-emerald-700 hover:to-emerald-600 shadow-lg shadow-emerald-600/20'
+                : 'bg-stone-900 text-white hover:bg-stone-800'
+            }`}
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
-                Sending…
+                <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                Sending...
               </span>
             ) : (
               `Send · $${price}`
@@ -280,144 +302,163 @@ function CreatorCard({
   creator,
   onMessage,
 }: {
-  creator: Creator
-  onMessage: (c: Creator, type: 'paywall' | 'guaranteed') => void
+  creator: User
+  onMessage: (c: User, type: 'paywall' | 'guaranteed') => void
 }) {
   const hasPaywall = (creator.dmPrice ?? 0) > 0
   const hasGuaranteed = (creator.guaranteedReplyPrice ?? 0) > 0
 
+  const socials = [
+    {
+      key: 'twitter',
+      handle: creator.socialTwitter,
+      audience: creator.socialTwitterAudience,
+      icon: Twitter,
+      url: (h: string) => `https://twitter.com/${h}`,
+      color: 'hover:text-sky-500',
+    },
+    {
+      key: 'instagram',
+      handle: creator.socialInstagram,
+      audience: creator.socialInstagramAudience,
+      icon: Instagram,
+      url: (h: string) => `https://instagram.com/${h}`,
+      color: 'hover:text-pink-500',
+    },
+    {
+      key: 'youtube',
+      handle: creator.socialYoutube,
+      audience: creator.socialYoutubeAudience,
+      icon: Youtube,
+      url: (h: string) => `https://youtube.com/@${h}`,
+      color: 'hover:text-red-500',
+    },
+  ].filter((s) => s.handle)
+  console.log({ socials })
   return (
-    <div className="bg-card border border-border rounded-3xl overflow-hidden card-hover group">
-      {/* Top accent */}
-      <div className="h-1 bg-gradient-to-r from-primary/60 via-primary/20 to-transparent" />
-
-      <div className="p-5">
+    <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden hover:shadow-md hover:border-stone-300 transition-all duration-200 flex flex-col h-full">
+      <div className="p-5 flex flex-col flex-1">
         {/* Header row */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Avatar name={creator.name} image={creator.image} />
-              {hasGuaranteed && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-primary border-2 border-card flex items-center justify-center">
-                  <BadgeCheck className="w-2.5 h-2.5 text-primary-foreground" />
-                </span>
-              )}
-            </div>
-            <div>
-              <p className=" font-bold text-foreground text-sm">
-                {creator.name || 'Creator'}
-              </p>
-              {creator.username && (
-                <p className="text-xs text-muted-foreground">
-                  @{creator.username}
-                </p>
-              )}
-            </div>
+        <div className="flex items-start gap-4 mb-4">
+          <div className="relative">
+            <Avatar name={creator.name} image={creator.image} size="lg" />
+            {hasGuaranteed && (
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-600 border-2 border-white flex items-center justify-center">
+                <BadgeCheck className="w-3 h-3 text-white" />
+              </span>
+            )}
           </div>
-          {creator.followerCount && (
-            <span className="text-[10px] text-muted-foreground flex items-center gap-1 bg-muted px-2 py-1 rounded-full border border-border">
-              <Users className="w-3 h-3" />{' '}
-              {creator.followerCount.toLocaleString()}
-            </span>
-          )}
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-stone-800 ">
+              {creator.name || 'Creator'}
+            </p>
+            {creator.username && (
+              <p className="text-sm text-stone-400">@{creator.username}</p>
+            )}
+            {/* Categories as small rounded badges */}
+            {creator.niche && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {creator.niche.split(',').map((category, idx) => (
+                  <span
+                    key={idx}
+                    className="text-[10px] px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 font-medium"
+                  >
+                    {category.trim()}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* Niche badge */}
-        {creator.niche && (
-          <span className="inline-flex items-center text-[10px] px-2.5 py-1 rounded-full bg-primary/8 text-primary border border-primary/15 font-semibold mb-3 uppercase tracking-wide">
-            {creator.niche}
-          </span>
-        )}
 
         {/* Bio */}
         {creator.bio && (
-          <p className="text-xs text-muted-foreground leading-relaxed mb-4 line-clamp-2">
+          <p className="text-sm text-stone-500 leading-relaxed mb-4 line-clamp-2">
             {creator.bio}
           </p>
         )}
 
-        {/* Socials */}
-        {(creator.socialTwitter ||
-          creator.socialInstagram ||
-          creator.socialYoutube) && (
-            <div className="flex items-center gap-3 mb-4">
-              {creator.socialTwitter && (
+        {/* Social Links */}
+        {socials.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {socials.map((social) => {
+              const count = formatCount(social.audience)
+              return (
                 <a
-                  href={`https://twitter.com/${creator.socialTwitter}`}
+                  key={social.key}
+                  href={social.url(social.handle!)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-1.5 rounded-lg bg-muted hover:bg-border transition-colors text-muted-foreground hover:text-foreground"
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-500 text-xs font-medium transition-all hover:bg-stone-100 ${social.color}`}
                 >
-                  <Twitter className="w-3.5 h-3.5" />
+                  <social.icon className="w-3.5 h-3.5" />
+                  <span className="truncate max-w-[80px]">
+                    @{social.handle}
+                  </span>
+                  {count && (
+                    <span className="text-stone-400 text-[10px] font-semibold">
+                      {count}
+                    </span>
+                  )}
                 </a>
-              )}
-              {creator.socialInstagram && (
-                <a
-                  href={`https://instagram.com/${creator.socialInstagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1.5 rounded-lg bg-muted hover:bg-border transition-colors text-muted-foreground hover:text-foreground"
-                >
-                  <Instagram className="w-3.5 h-3.5" />
-                </a>
-              )}
-              {creator.socialYoutube && (
-                <a
-                  href={`https://youtube.com/@${creator.socialYoutube}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1.5 rounded-lg bg-muted hover:bg-border transition-colors text-muted-foreground hover:text-foreground"
-                >
-                  <Youtube className="w-3.5 h-3.5" />
-                </a>
-              )}
-            </div>
-          )}
+              )
+            })}
+          </div>
+        )}
 
-        {/* Pricing & CTA */}
-        <div className="space-y-2 mt-auto pt-2 border-t border-border/60">
+        {/* Spacer to push buttons to bottom */}
+        <div className="flex-1" />
+
+        {/* Pricing Buttons - Always at bottom */}
+        <div className="space-y-2.5 pt-3 border-t border-stone-100 mt-auto">
+          {/* DM Button - Simple styling */}
           {hasPaywall && (
             <button
               onClick={() => onMessage(creator, 'paywall')}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 border border-border rounded-xl hover:border-primary/30 hover:bg-primary/3 transition-all text-left group/btn"
+              className="w-full flex items-center justify-between px-4 py-3 bg-emerald-100 border border-emerald-400 hover:bg-emerald-300 texta-white rounded-xl transition text-left"
             >
-              <span className="text-xs text-foreground font-medium flex items-center gap-2">
-                <MessageSquare className="w-3.5 h-3.5 text-muted-foreground group-hover/btn:text-primary transition-colors" />
-                Send DM
+              <span className="flex items-center gap-2.5">
+                <MessageSquareText size={20} />
+                <span className="text-sm font-medium">Send DM</span>
               </span>
-              <span className="font-mono-nums text-sm font-bold text-primary">
-                ${creator.dmPrice}
-              </span>
+              <span className="text-sm font-semibold">${creator.dmPrice}</span>
             </button>
           )}
+
+          {/* Guaranteed Reply Button - Premium styling */}
           {hasGuaranteed && (
             <button
               onClick={() => onMessage(creator, 'guaranteed')}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 bg-primary text-primary-foreground rounded-xl hover:opacity-90 active:scale-[0.98] transition-all text-left glow-primary-sm"
+              className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-600 active:scale-[0.99] transition-all text-left shadow-lg shadow-emerald-600/20 group"
             >
-              <span className="text-xs font-bold flex items-center gap-2">
-                <BadgeCheck className="w-3.5 h-3.5" />
-                Guaranteed Reply
+              <span className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">
+                    Guaranteed Reply
+                    <BadgeCheck className="w-3.5 h-3.5" />
+                  </p>
+                  <p className="text-[10px] text-emerald-100">
+                    Genuine conversation or your money back
+                  </p>
+                </div>
               </span>
-              <span className="font-mono-nums text-sm font-bold">
+              <span className="text-base font-medium">
                 ${creator.guaranteedReplyPrice}
               </span>
             </button>
           )}
+
+          {/* Free DM fallback */}
           {!hasPaywall && !hasGuaranteed && (
             <button
               onClick={() => onMessage(creator, 'paywall')}
-              className="w-full flex items-center justify-center gap-2 py-2.5 border border-border text-foreground text-xs font-medium rounded-xl hover:border-primary/30 hover:bg-muted transition-all"
+              className="w-full flex items-center justify-center gap-2 py-3 border border-stone-200 text-stone-600 text-sm font-medium rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all"
             >
-              <MessageSquare className="w-3.5 h-3.5" /> Send free DM
+              <MessageSquareText className="w-4 h-4" /> Send free DM
             </button>
-          )}
-          {creator.username && (
-            <Link to={`/profile/${creator.username}`}>
-              <button className="w-full py-1.5 text-xs text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-1">
-                View profile <ArrowRight className="w-3 h-3" />
-              </button>
-            </Link>
           )}
         </div>
       </div>
@@ -427,12 +468,12 @@ function CreatorCard({
 
 /* ─── Page ────────────────────────────────────────────────────────────────── */
 function Creators() {
-  const [creators, setCreators] = useState<Creator[]>([])
+  const [creators, setCreators] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [niche, setNiche] = useState('All')
   const [modal, setModal] = useState<{
-    creator: Creator
+    creator: User
     type: 'paywall' | 'guaranteed'
   } | null>(null)
   const [sentSuccess, setSentSuccess] = useState(false)
@@ -441,7 +482,7 @@ function Creators() {
     api
       .creators()
       .then(setCreators)
-      .catch(() => { })
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
@@ -456,47 +497,48 @@ function Creators() {
 
   return (
     <div>
-
-      <div className="p-6 max-w-6xl mx-auto">
+      <div className="pt-14 pb-24">
+        {/* <div className="max-w-6xl mx-auto px-6"> */}
         {/* Header */}
-        <div className="mb-8 animate-fade-up">
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className=" text-2xl font-bold text-foreground">
-              Browse Creators
-            </h1>
-            <Sparkles className="w-5 h-5 text-primary animate-pulse-slow" />
-          </div>
-          <p className="text-muted-foreground text-sm">
+        <div className="mb-8">
+          <h1
+            className="text-2xl font-md text-stone-900 tracking-tight"
+            style={{ fontFamily: "'Lora', serif" }}
+          >
+            Browse Creators
+          </h1>
+          <p className="text-sm text-stone-400 mt-1">
             Reach out directly, or pay for a guaranteed reply.
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-8 animate-fade-up delay-100">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search creators…"
-              className="input-base pl-10"
-            />
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 flex-shrink-0 scrollbar-hide">
-            {NICHES.map((n) => (
-              <button
-                key={n}
-                onClick={() => setNiche(n)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex-shrink-0 ${niche === n
-                    ? 'bg-primary text-primary-foreground glow-primary-sm'
-                    : 'bg-card border border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                  }`}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
+        {/* Search */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search creators..."
+            className="w-full bg-white border border-stone-200 rounded-xl text-sm text-stone-800 placeholder-stone-400 pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all shadow-sm"
+          />
+        </div>
+
+        {/* Categories */}
+        <div className="flex gap-2 overflow-x-auto pb-1 mb-6 scrollbar-hide">
+          {NICHES.map((n) => (
+            <button
+              key={n}
+              onClick={() => setNiche(n)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex-shrink-0 ${
+                niche === n
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                  : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-300 hover:bg-stone-50'
+              }`}
+            >
+              {n}
+            </button>
+          ))}
         </div>
 
         {loading ? (
@@ -504,57 +546,58 @@ function Creators() {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="bg-card border border-border rounded-3xl overflow-hidden animate-pulse"
+                className="bg-white border border-stone-200 rounded-2xl overflow-hidden animate-pulse"
               >
-                <div className="h-1 bg-muted" />
                 <div className="p-5 space-y-4">
-                  <div className="flex gap-3">
-                    <div className="w-11 h-11 rounded-full bg-muted flex-shrink-0" />
+                  <div className="flex gap-4">
+                    <div className="w-14 h-14 rounded-full bg-stone-100 flex-shrink-0" />
                     <div className="flex-1 space-y-2 pt-1">
-                      <div className="h-3.5 bg-muted rounded w-28" />
-                      <div className="h-2.5 bg-muted rounded w-20" />
+                      <div className="h-4 bg-stone-100 rounded w-28" />
+                      <div className="h-3 bg-stone-100 rounded w-20" />
                     </div>
                   </div>
-                  <div className="h-2.5 bg-muted rounded" />
-                  <div className="h-2.5 bg-muted rounded w-3/4" />
-                  <div className="space-y-2 pt-2">
-                    <div className="h-10 bg-muted rounded-xl" />
-                    <div className="h-10 bg-muted rounded-xl" />
+                  <div className="h-3 bg-stone-100 rounded" />
+                  <div className="h-3 bg-stone-100 rounded w-3/4" />
+                  <div className="flex gap-2">
+                    <div className="h-8 bg-stone-100 rounded-lg w-24" />
+                    <div className="h-8 bg-stone-100 rounded-lg w-24" />
+                  </div>
+                  <div className="space-y-2 pt-2 border-t border-stone-100">
+                    <div className="h-12 bg-stone-100 rounded-xl" />
+                    <div className="h-12 bg-stone-100 rounded-xl" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-3xl bg-muted flex items-center justify-center mb-5">
-              <Users className="w-8 h-8 text-muted-foreground" />
+          <div className="bg-white rounded-2xl border border-stone-200 shadow-sm">
+            <div className="flex flex-col items-center justify-center py-20 text-center px-6">
+              <div className="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center mb-5">
+                <Users className="w-8 h-8 text-stone-400" />
+              </div>
+              <p className="font-semibold text-stone-800 text-lg mb-2">
+                No creators found
+              </p>
+              <p className="text-stone-500 text-sm max-w-sm">
+                {search || niche !== 'All'
+                  ? 'Try adjusting your search or filters to find more creators.'
+                  : 'Be the first to set up your creator profile!'}
+              </p>
             </div>
-            <p className=" font-bold text-foreground text-xl mb-2">
-              No creators found
-            </p>
-            <p className="text-muted-foreground text-sm">
-              {search || niche !== 'All'
-                ? 'Try adjusting your filters.'
-                : 'Be the first to set up your profile!'}
-            </p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((c, i) => (
-              <div
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-5">
+            {filtered.map((c) => (
+              <CreatorCard
                 key={c.id}
-                className="animate-fade-up"
-                style={{ animationDelay: `${i * 50}ms` }}
-              >
-                <CreatorCard
-                  creator={c}
-                  onMessage={(creator, type) => setModal({ creator, type })}
-                />
-              </div>
+                creator={c}
+                onMessage={(creator, type) => setModal({ creator, type })}
+              />
             ))}
           </div>
         )}
+        {/* </div> */}
       </div>
 
       {modal && (
@@ -572,13 +615,13 @@ function Creators() {
 
       {/* Success toast */}
       {sentSuccess && (
-        <div className="fixed bottom-6 right-6 z-50 bg-card border border-border shadow-xl text-sm font-semibold px-5 py-3.5 rounded-2xl flex items-center gap-3 animate-fade-up">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-            <BadgeCheck className="w-4 h-4 text-emerald-500" />
+        <div className="fixed bottom-6 right-6 z-50 bg-white border border-stone-200 shadow-xl text-sm font-semibold px-5 py-3.5 rounded-2xl flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+            <BadgeCheck className="w-4 h-4 text-emerald-600" />
           </div>
           <div>
-            <p className="text-foreground">Message sent!</p>
-            <p className="text-xs text-muted-foreground font-normal">
+            <p className="text-stone-800">Message sent!</p>
+            <p className="text-xs text-stone-500 font-normal">
               Your DM is in their inbox
             </p>
           </div>
