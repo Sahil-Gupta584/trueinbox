@@ -1,6 +1,20 @@
-export function SectionCard({ icon, title, subtitle, children, className }: { icon?: React.ReactNode, title?: string, subtitle?: string, children: React.ReactNode, className?: React.HTMLAttributes<HTMLDivElement>['className'] }) {
+export function SectionCard({
+  icon,
+  title,
+  subtitle,
+  children,
+  className,
+}: {
+  icon?: React.ReactNode
+  title?: string
+  subtitle?: string
+  children: React.ReactNode
+  className?: React.HTMLAttributes<HTMLDivElement>['className']
+}) {
   return (
-    <div className={`bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden ${className}`}>
+    <div
+      className={`bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden ${className}`}
+    >
       <div className="px-6 py-5 border-b border-stone-100 flex items-start gap-3">
         <span className="text-base mt-0.5 opacity-70">{icon}</span>
         <div>

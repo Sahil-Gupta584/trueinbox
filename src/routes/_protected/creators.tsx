@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { api } from '../../lib/api'
-import {
-  Search,
-  Users,
-  MessageSquareText,
-  DollarSign,
-  BadgeCheck,
-  X,
-  ArrowRight,
-  Sparkles,
-} from 'lucide-react'
+import { Search, Users, BadgeCheck, UserPlus, Copy, Check } from 'lucide-react'
 import type { User } from '#/db/types'
+import { PaymentButtons } from '#/components/PaymentButtons'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '#/components/ui/dialog'
 
 export const Route = createFileRoute('/_protected/creators')({
   component: Creators,
@@ -75,237 +74,9 @@ function Avatar({
   )
 }
 
-/* ─── Send DM Modal ───────────────────────────────────────────────────────── */
-function SendDMModal({
-  creator,
-  defaultType,
-  onClose,
-  onSent,
-}: {
-  creator: Creator
-  defaultType: 'paywall' | 'guaranteed'
-  onClose: () => void
-  onSent: () => void
-}) {
-  const [type, setType] = useState<'paywall' | 'guaranteed'>(defaultType)
-  const [message, setMessage] = useState('')
-  const [subject, setSubject] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  const price =
-    type === 'guaranteed'
-      ? (creator.guaranteedReplyPrice ?? 0)
-      : (creator.dmPrice ?? 0)
-
-  const handleSend = async () => {
-    if (!message.trim()) return
-    setLoading(true)
-    setError('')
-    try {
-      await api.startConversation(
-        creator.id,
-        message.trim(),
-        type,
-        subject.trim() || undefined,
-      )
-      onSent()
-    } catch (e: any) {
-      setError(e.message || 'Failed to send.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm" />
-
-      <div className="relative bg-white rounded-t-2xl sm:rounded-2xl border border-stone-200 shadow-2xl w-full max-w-md z-10">
-        {/* Header */}
-        <div className="flex items-center gap-3 p-5 border-b border-stone-100">
-          <Avatar name={creator.name} image={creator.image} />
-          <div className="flex-1">
-            <p className="font-semibold text-stone-800">{creator.name}</p>
-            {creator.niche && (
-              <p className="text-xs text-stone-400 mt-0.5">{creator.niche}</p>
-            )}
-          </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-xl bg-stone-100 hover:bg-stone-200 flex items-center justify-center transition-colors"
-          >
-            <X className="w-4 h-4 text-stone-500" />
-          </button>
-        </div>
-
-        <div className="p-5 space-y-4">
-          {/* Type toggle */}
-          {(creator.dmPrice ?? 0) > 0 &&
-            (creator.guaranteedReplyPrice ?? 0) > 0 && (
-              <div>
-                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2.5">
-                  Message type
-                </label>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    onClick={() => setType('paywall')}
-                    className={`p-3.5 rounded-xl border text-left transition-all ${
-                      type === 'paywall'
-                        ? 'border-emerald-300 bg-emerald-50 ring-1 ring-emerald-200'
-                        : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50'
-                    }`}
-                  >
-                    <p className="text-xs font-semibold text-stone-700">
-                      Send a DM
-                    </p>
-                    <p className="text-[10px] text-stone-400 mt-0.5 leading-tight">
-                      Pay to reach · may refund
-                    </p>
-                    <p className="text-base font-bold text-stone-800 mt-2">
-                      ${creator.dmPrice ?? 0}
-                    </p>
-                  </button>
-                  <button
-                    onClick={() => setType('guaranteed')}
-                    className={`p-3.5 rounded-xl border text-left transition-all ${
-                      type === 'guaranteed'
-                        ? 'border-emerald-400 bg-gradient-to-br from-emerald-50 to-emerald-100 ring-1 ring-emerald-300'
-                        : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                      <p className="text-xs font-semibold text-stone-700">
-                        Guaranteed
-                      </p>
-                    </div>
-                    <p className="text-[10px] text-stone-400 mt-0.5 leading-tight">
-                      Creator must reply
-                    </p>
-                    <p className="text-base font-bold text-emerald-700 mt-2">
-                      ${creator.guaranteedReplyPrice ?? 0}
-                    </p>
-                  </button>
-                </div>
-              </div>
-            )}
-
-          <div>
-            <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
-              Subject{' '}
-              <span className="font-normal normal-case text-stone-400">
-                (optional)
-              </span>
-            </label>
-            <input
-              type="text"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder="e.g. Collab proposal, Quick question..."
-              className="w-full bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder-stone-400 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
-              Message <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={5}
-              placeholder={
-                type === 'guaranteed'
-                  ? 'Ask your question or describe what you need clearly...'
-                  : 'Introduce yourself and your proposal...'
-              }
-              className="w-full bg-stone-50 border border-stone-200 rounded-xl text-sm text-stone-800 placeholder-stone-400 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all resize-none"
-            />
-          </div>
-
-          {error && (
-            <div className="px-3.5 py-2.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600">
-              {error}
-            </div>
-          )}
-
-          <div
-            className={`flex items-start gap-3 p-3.5 rounded-xl border ${
-              type === 'guaranteed'
-                ? 'bg-emerald-50 border-emerald-200'
-                : 'bg-stone-50 border-stone-200'
-            }`}
-          >
-            <DollarSign
-              className={`w-4 h-4 flex-shrink-0 mt-0.5 ${type === 'guaranteed' ? 'text-emerald-600' : 'text-stone-500'}`}
-            />
-            <p className="text-xs text-stone-600 leading-relaxed">
-              {type === 'guaranteed' ? (
-                <>
-                  <span className="font-semibold text-emerald-700">
-                    ${price} fee
-                  </span>{' '}
-                  — {creator.name?.split(' ')[0]} is obligated to reply
-                  thoughtfully.
-                </>
-              ) : (
-                <>
-                  <span className="font-semibold text-stone-700">
-                    ${price} fee
-                  </span>{' '}
-                  — paid to reach their inbox. Creator can refund if they
-                  choose.
-                </>
-              )}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-3 px-5 pb-5">
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 border border-stone-200 text-stone-600 text-sm font-medium rounded-xl hover:bg-stone-50 transition-all"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSend}
-            disabled={!message.trim() || loading}
-            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-              type === 'guaranteed'
-                ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:from-emerald-700 hover:to-emerald-600 shadow-lg shadow-emerald-600/20'
-                : 'bg-stone-900 text-white hover:bg-stone-800'
-            }`}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                Sending...
-              </span>
-            ) : (
-              `Send · $${price}`
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 /* ─── Creator Card ────────────────────────────────────────────────────────── */
-function CreatorCard({
-  creator,
-  onMessage,
-}: {
-  creator: User
-  onMessage: (c: User, type: 'paywall' | 'guaranteed') => void
-}) {
-  const hasPaywall = (creator.dmPrice ?? 0) > 0
+function CreatorCard({ creator }: { creator: User }) {
+  const navigate = useNavigate()
   const hasGuaranteed = (creator.guaranteedReplyPrice ?? 0) > 0
 
   const socials = [
@@ -334,7 +105,16 @@ function CreatorCard({
       color: 'hover:text-red-500',
     },
   ].filter((s) => s.handle)
-  console.log({ socials })
+
+  const handleNavigateToInbox = () => {
+    if (creator.username) {
+      navigate({
+        to: '/inbox/$username',
+        params: { username: creator.username },
+      })
+    }
+  }
+
   return (
     <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden hover:shadow-md hover:border-stone-300 transition-all duration-200 flex flex-col h-full">
       <div className="p-5 flex flex-col flex-1">
@@ -409,57 +189,15 @@ function CreatorCard({
         {/* Spacer to push buttons to bottom */}
         <div className="flex-1" />
 
-        {/* Pricing Buttons - Always at bottom */}
-        <div className="space-y-2.5 pt-3 border-t border-stone-100 mt-auto">
-          {/* DM Button - Simple styling */}
-          {hasPaywall && (
-            <button
-              onClick={() => onMessage(creator, 'paywall')}
-              className="w-full flex items-center justify-between px-4 py-3 bg-emerald-100 border border-emerald-400 hover:bg-emerald-300 texta-white rounded-xl transition text-left"
-            >
-              <span className="flex items-center gap-2.5">
-                <MessageSquareText size={20} />
-                <span className="text-sm font-medium">Send DM</span>
-              </span>
-              <span className="text-sm font-semibold">${creator.dmPrice}</span>
-            </button>
-          )}
-
-          {/* Guaranteed Reply Button - Premium styling */}
-          {hasGuaranteed && (
-            <button
-              onClick={() => onMessage(creator, 'guaranteed')}
-              className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-600 active:scale-[0.99] transition-all text-left shadow-lg shadow-emerald-600/20 group"
-            >
-              <span className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">
-                    Guaranteed Reply
-                    <BadgeCheck className="w-3.5 h-3.5" />
-                  </p>
-                  <p className="text-[10px] text-emerald-100">
-                    Genuine conversation or your money back
-                  </p>
-                </div>
-              </span>
-              <span className="text-base font-medium">
-                ${creator.guaranteedReplyPrice}
-              </span>
-            </button>
-          )}
-
-          {/* Free DM fallback */}
-          {!hasPaywall && !hasGuaranteed && (
-            <button
-              onClick={() => onMessage(creator, 'paywall')}
-              className="w-full flex items-center justify-center gap-2 py-3 border border-stone-200 text-stone-600 text-sm font-medium rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all"
-            >
-              <MessageSquareText className="w-4 h-4" /> Send free DM
-            </button>
-          )}
+        {/* Payment Buttons - Always at bottom */}
+        <div className="pt-3 border-t border-stone-100 mt-auto">
+          <PaymentButtons
+            dmPrice={creator.dmPrice}
+            guaranteedReplyPrice={creator.guaranteedReplyPrice}
+            onPaywall={handleNavigateToInbox}
+            onGuaranteed={handleNavigateToInbox}
+            layout="vertical"
+          />
         </div>
       </div>
     </div>
@@ -468,15 +206,33 @@ function CreatorCard({
 
 /* ─── Page ────────────────────────────────────────────────────────────────── */
 function Creators() {
+  const { user } = Route.useRouteContext()
   const [creators, setCreators] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [niche, setNiche] = useState('All')
-  const [modal, setModal] = useState<{
-    creator: User
-    type: 'paywall' | 'guaranteed'
-  } | null>(null)
-  const [sentSuccess, setSentSuccess] = useState(false)
+  const [inviteModalOpen, setInviteModalOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const inviteLink = `${window.location.origin}?utm_source=invite&utm_medium=referral&utm_campaign=creator_invite&utm_content=${user.username || user.id}`
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = inviteLink
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
 
   useEffect(() => {
     api
@@ -498,19 +254,81 @@ function Creators() {
   return (
     <div>
       <div className="pt-14 pb-24">
-        {/* <div className="max-w-6xl mx-auto px-6"> */}
         {/* Header */}
-        <div className="mb-8">
-          <h1
-            className="text-2xl font-md text-stone-900 tracking-tight"
-            style={{ fontFamily: "'Lora', serif" }}
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1
+              className="text-2xl font-md text-stone-900 tracking-tight"
+              style={{ fontFamily: "'Lora', serif" }}
+            >
+              Browse Creators
+            </h1>
+            <p className="text-sm text-stone-400 mt-1">
+              Reach out directly, or pay for a guaranteed reply.
+            </p>
+          </div>
+          <button
+            onClick={() => setInviteModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-600/20 flex-shrink-0"
           >
-            Browse Creators
-          </h1>
-          <p className="text-sm text-stone-400 mt-1">
-            Reach out directly, or pay for a guaranteed reply.
-          </p>
+            <UserPlus className="w-4 h-4" />
+            <span className="hidden sm:inline">Invite Creator</span>
+            <span className="sm:hidden">Invite</span>
+          </button>
         </div>
+
+        {/* Invite Modal */}
+        <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-emerald-600" />
+                Invite a Creator
+              </DialogTitle>
+              <DialogDescription>
+                Invite your favorite creators, influencers, or celebrities to
+                TrueInbox. Share this link with them to get their attention!
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 pt-2">
+              <div className="bg-stone-50 border border-stone-200 rounded-xl p-3">
+                <p className="text-xs text-stone-500 mb-2 font-medium">
+                  Your invite link
+                </p>
+                <p className="text-sm text-stone-700 break-all font-mono bg-white px-3 py-2 rounded-lg border border-stone-200">
+                  {inviteLink}
+                </p>
+              </div>
+
+              <button
+                onClick={handleCopyLink}
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  copied
+                    ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                    : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/20'
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    Copy Link
+                  </>
+                )}
+              </button>
+
+              <p className="text-xs text-stone-400 text-center">
+                When creators sign up using your link, we'll know you referred
+                them.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Search */}
         <div className="relative mb-4">
@@ -589,44 +407,11 @@ function Creators() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-5">
             {filtered.map((c) => (
-              <CreatorCard
-                key={c.id}
-                creator={c}
-                onMessage={(creator, type) => setModal({ creator, type })}
-              />
+              <CreatorCard key={c.id} creator={c} />
             ))}
           </div>
         )}
-        {/* </div> */}
       </div>
-
-      {modal && (
-        <SendDMModal
-          creator={modal.creator}
-          defaultType={modal.type}
-          onClose={() => setModal(null)}
-          onSent={() => {
-            setModal(null)
-            setSentSuccess(true)
-            setTimeout(() => setSentSuccess(false), 4000)
-          }}
-        />
-      )}
-
-      {/* Success toast */}
-      {sentSuccess && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white border border-stone-200 shadow-xl text-sm font-semibold px-5 py-3.5 rounded-2xl flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
-            <BadgeCheck className="w-4 h-4 text-emerald-600" />
-          </div>
-          <div>
-            <p className="text-stone-800">Message sent!</p>
-            <p className="text-xs text-stone-500 font-normal">
-              Your DM is in their inbox
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -16,21 +16,31 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
+import { Route as ApiWebhookRouteImport } from './routes/api/webhook'
 import { Route as ApiUnreadRouteImport } from './routes/api/unread'
 import { Route as ApiStatsRouteImport } from './routes/api/stats'
+import { Route as ApiRefundRouteImport } from './routes/api/refund'
 import { Route as ApiPingRouteImport } from './routes/api/ping'
+import { Route as ApiPayoutMethodsRouteImport } from './routes/api/payout-methods'
+import { Route as ApiPaymentSettingsRouteImport } from './routes/api/payment-settings'
 import { Route as ApiMeRouteImport } from './routes/api/me'
 import { Route as ApiDevLoginRouteImport } from './routes/api/dev-login'
 import { Route as ApiCreatorsRouteImport } from './routes/api/creators'
 import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
+import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
+import { Route as ApiBalanceRouteImport } from './routes/api/balance'
 import { Route as ProtectedOnboardingRouteImport } from './routes/_protected/onboarding'
-import { Route as ProtectedMessagesRouteImport } from './routes/_protected/messages'
 import { Route as ProtectedMeRouteImport } from './routes/_protected/me'
+import { Route as ProtectedInboxRouteImport } from './routes/_protected/inbox'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
 import { Route as ProtectedCreatorsRouteImport } from './routes/_protected/creators'
 import { Route as ProtectedAboutRouteImport } from './routes/_protected/about'
+import { Route as ProtectedInboxIndexRouteImport } from './routes/_protected/inbox/index'
+import { Route as ApiReleaseEscrowAccessIdRouteImport } from './routes/api/release-escrow.$accessId'
+import { Route as ApiDmAccessUsernameRouteImport } from './routes/api/dm-access.$username'
 import { Route as ApiCreatorsUsernameRouteImport } from './routes/api/creators.$username'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ProtectedInboxUsernameRouteImport } from './routes/_protected/inbox/$username'
 import { Route as ApiConversationsIdRefundRouteImport } from './routes/api/conversations.$id.refund'
 import { Route as ApiConversationsIdMessagesRouteImport } from './routes/api/conversations.$id.messages'
 
@@ -68,6 +78,11 @@ const DemoBetterAuthRoute = DemoBetterAuthRouteImport.update({
   path: '/demo/better-auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhookRoute = ApiWebhookRouteImport.update({
+  id: '/api/webhook',
+  path: '/api/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiUnreadRoute = ApiUnreadRouteImport.update({
   id: '/api/unread',
   path: '/api/unread',
@@ -78,9 +93,24 @@ const ApiStatsRoute = ApiStatsRouteImport.update({
   path: '/api/stats',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRefundRoute = ApiRefundRouteImport.update({
+  id: '/api/refund',
+  path: '/api/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPingRoute = ApiPingRouteImport.update({
   id: '/api/ping',
   path: '/api/ping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPayoutMethodsRoute = ApiPayoutMethodsRouteImport.update({
+  id: '/api/payout-methods',
+  path: '/api/payout-methods',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaymentSettingsRoute = ApiPaymentSettingsRouteImport.update({
+  id: '/api/payment-settings',
+  path: '/api/payment-settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiMeRoute = ApiMeRouteImport.update({
@@ -103,19 +133,29 @@ const ApiConversationsRoute = ApiConversationsRouteImport.update({
   path: '/api/conversations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCheckoutRoute = ApiCheckoutRouteImport.update({
+  id: '/api/checkout',
+  path: '/api/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBalanceRoute = ApiBalanceRouteImport.update({
+  id: '/api/balance',
+  path: '/api/balance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProtectedOnboardingRoute = ProtectedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedMessagesRoute = ProtectedMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => ProtectedRoute,
-} as any)
 const ProtectedMeRoute = ProtectedMeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedInboxRoute = ProtectedInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
   getParentRoute: () => ProtectedRoute,
 } as any)
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
@@ -133,6 +173,22 @@ const ProtectedAboutRoute = ProtectedAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const ProtectedInboxIndexRoute = ProtectedInboxIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProtectedInboxRoute,
+} as any)
+const ApiReleaseEscrowAccessIdRoute =
+  ApiReleaseEscrowAccessIdRouteImport.update({
+    id: '/api/release-escrow/$accessId',
+    path: '/api/release-escrow/$accessId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiDmAccessUsernameRoute = ApiDmAccessUsernameRouteImport.update({
+  id: '/api/dm-access/$username',
+  path: '/api/dm-access/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCreatorsUsernameRoute = ApiCreatorsUsernameRouteImport.update({
   id: '/$username',
   path: '/$username',
@@ -142,6 +198,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedInboxUsernameRoute = ProtectedInboxUsernameRouteImport.update({
+  id: '/$username',
+  path: '/$username',
+  getParentRoute: () => ProtectedInboxRoute,
 } as any)
 const ApiConversationsIdRefundRoute =
   ApiConversationsIdRefundRouteImport.update({
@@ -163,21 +224,31 @@ export interface FileRoutesByFullPath {
   '/about': typeof ProtectedAboutRoute
   '/creators': typeof ProtectedCreatorsRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/inbox': typeof ProtectedInboxRouteWithChildren
   '/me': typeof ProtectedMeRoute
-  '/messages': typeof ProtectedMessagesRoute
   '/onboarding': typeof ProtectedOnboardingRoute
+  '/api/balance': typeof ApiBalanceRoute
+  '/api/checkout': typeof ApiCheckoutRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/creators': typeof ApiCreatorsRouteWithChildren
   '/api/dev-login': typeof ApiDevLoginRoute
   '/api/me': typeof ApiMeRoute
+  '/api/payment-settings': typeof ApiPaymentSettingsRoute
+  '/api/payout-methods': typeof ApiPayoutMethodsRoute
   '/api/ping': typeof ApiPingRoute
+  '/api/refund': typeof ApiRefundRoute
   '/api/stats': typeof ApiStatsRoute
   '/api/unread': typeof ApiUnreadRoute
+  '/api/webhook': typeof ApiWebhookRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/inbox/$username': typeof ProtectedInboxUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creators/$username': typeof ApiCreatorsUsernameRoute
+  '/api/dm-access/$username': typeof ApiDmAccessUsernameRoute
+  '/api/release-escrow/$accessId': typeof ApiReleaseEscrowAccessIdRoute
+  '/inbox/': typeof ProtectedInboxIndexRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
   '/api/conversations/$id/refund': typeof ApiConversationsIdRefundRoute
 }
@@ -189,20 +260,29 @@ export interface FileRoutesByTo {
   '/creators': typeof ProtectedCreatorsRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/me': typeof ProtectedMeRoute
-  '/messages': typeof ProtectedMessagesRoute
   '/onboarding': typeof ProtectedOnboardingRoute
+  '/api/balance': typeof ApiBalanceRoute
+  '/api/checkout': typeof ApiCheckoutRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/creators': typeof ApiCreatorsRouteWithChildren
   '/api/dev-login': typeof ApiDevLoginRoute
   '/api/me': typeof ApiMeRoute
+  '/api/payment-settings': typeof ApiPaymentSettingsRoute
+  '/api/payout-methods': typeof ApiPayoutMethodsRoute
   '/api/ping': typeof ApiPingRoute
+  '/api/refund': typeof ApiRefundRoute
   '/api/stats': typeof ApiStatsRoute
   '/api/unread': typeof ApiUnreadRoute
+  '/api/webhook': typeof ApiWebhookRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/inbox/$username': typeof ProtectedInboxUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creators/$username': typeof ApiCreatorsUsernameRoute
+  '/api/dm-access/$username': typeof ApiDmAccessUsernameRoute
+  '/api/release-escrow/$accessId': typeof ApiReleaseEscrowAccessIdRoute
+  '/inbox': typeof ProtectedInboxIndexRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
   '/api/conversations/$id/refund': typeof ApiConversationsIdRefundRoute
 }
@@ -215,21 +295,31 @@ export interface FileRoutesById {
   '/_protected/about': typeof ProtectedAboutRoute
   '/_protected/creators': typeof ProtectedCreatorsRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
+  '/_protected/inbox': typeof ProtectedInboxRouteWithChildren
   '/_protected/me': typeof ProtectedMeRoute
-  '/_protected/messages': typeof ProtectedMessagesRoute
   '/_protected/onboarding': typeof ProtectedOnboardingRoute
+  '/api/balance': typeof ApiBalanceRoute
+  '/api/checkout': typeof ApiCheckoutRoute
   '/api/conversations': typeof ApiConversationsRouteWithChildren
   '/api/creators': typeof ApiCreatorsRouteWithChildren
   '/api/dev-login': typeof ApiDevLoginRoute
   '/api/me': typeof ApiMeRoute
+  '/api/payment-settings': typeof ApiPaymentSettingsRoute
+  '/api/payout-methods': typeof ApiPayoutMethodsRoute
   '/api/ping': typeof ApiPingRoute
+  '/api/refund': typeof ApiRefundRoute
   '/api/stats': typeof ApiStatsRoute
   '/api/unread': typeof ApiUnreadRoute
+  '/api/webhook': typeof ApiWebhookRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/_protected/inbox/$username': typeof ProtectedInboxUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/creators/$username': typeof ApiCreatorsUsernameRoute
+  '/api/dm-access/$username': typeof ApiDmAccessUsernameRoute
+  '/api/release-escrow/$accessId': typeof ApiReleaseEscrowAccessIdRoute
+  '/_protected/inbox/': typeof ProtectedInboxIndexRoute
   '/api/conversations/$id/messages': typeof ApiConversationsIdMessagesRoute
   '/api/conversations/$id/refund': typeof ApiConversationsIdRefundRoute
 }
@@ -242,21 +332,31 @@ export interface FileRouteTypes {
     | '/about'
     | '/creators'
     | '/dashboard'
+    | '/inbox'
     | '/me'
-    | '/messages'
     | '/onboarding'
+    | '/api/balance'
+    | '/api/checkout'
     | '/api/conversations'
     | '/api/creators'
     | '/api/dev-login'
     | '/api/me'
+    | '/api/payment-settings'
+    | '/api/payout-methods'
     | '/api/ping'
+    | '/api/refund'
     | '/api/stats'
     | '/api/unread'
+    | '/api/webhook'
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/inbox/$username'
     | '/api/auth/$'
     | '/api/creators/$username'
+    | '/api/dm-access/$username'
+    | '/api/release-escrow/$accessId'
+    | '/inbox/'
     | '/api/conversations/$id/messages'
     | '/api/conversations/$id/refund'
   fileRoutesByTo: FileRoutesByTo
@@ -268,20 +368,29 @@ export interface FileRouteTypes {
     | '/creators'
     | '/dashboard'
     | '/me'
-    | '/messages'
     | '/onboarding'
+    | '/api/balance'
+    | '/api/checkout'
     | '/api/conversations'
     | '/api/creators'
     | '/api/dev-login'
     | '/api/me'
+    | '/api/payment-settings'
+    | '/api/payout-methods'
     | '/api/ping'
+    | '/api/refund'
     | '/api/stats'
     | '/api/unread'
+    | '/api/webhook'
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/inbox/$username'
     | '/api/auth/$'
     | '/api/creators/$username'
+    | '/api/dm-access/$username'
+    | '/api/release-escrow/$accessId'
+    | '/inbox'
     | '/api/conversations/$id/messages'
     | '/api/conversations/$id/refund'
   id:
@@ -293,21 +402,31 @@ export interface FileRouteTypes {
     | '/_protected/about'
     | '/_protected/creators'
     | '/_protected/dashboard'
+    | '/_protected/inbox'
     | '/_protected/me'
-    | '/_protected/messages'
     | '/_protected/onboarding'
+    | '/api/balance'
+    | '/api/checkout'
     | '/api/conversations'
     | '/api/creators'
     | '/api/dev-login'
     | '/api/me'
+    | '/api/payment-settings'
+    | '/api/payout-methods'
     | '/api/ping'
+    | '/api/refund'
     | '/api/stats'
     | '/api/unread'
+    | '/api/webhook'
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/_protected/inbox/$username'
     | '/api/auth/$'
     | '/api/creators/$username'
+    | '/api/dm-access/$username'
+    | '/api/release-escrow/$accessId'
+    | '/_protected/inbox/'
     | '/api/conversations/$id/messages'
     | '/api/conversations/$id/refund'
   fileRoutesById: FileRoutesById
@@ -317,17 +436,25 @@ export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRouteWithChildren
   LandingRoute: typeof LandingRoute
   LoginRoute: typeof LoginRoute
+  ApiBalanceRoute: typeof ApiBalanceRoute
+  ApiCheckoutRoute: typeof ApiCheckoutRoute
   ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
   ApiCreatorsRoute: typeof ApiCreatorsRouteWithChildren
   ApiDevLoginRoute: typeof ApiDevLoginRoute
   ApiMeRoute: typeof ApiMeRoute
+  ApiPaymentSettingsRoute: typeof ApiPaymentSettingsRoute
+  ApiPayoutMethodsRoute: typeof ApiPayoutMethodsRoute
   ApiPingRoute: typeof ApiPingRoute
+  ApiRefundRoute: typeof ApiRefundRoute
   ApiStatsRoute: typeof ApiStatsRoute
   ApiUnreadRoute: typeof ApiUnreadRoute
+  ApiWebhookRoute: typeof ApiWebhookRoute
   DemoBetterAuthRoute: typeof DemoBetterAuthRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiDmAccessUsernameRoute: typeof ApiDmAccessUsernameRoute
+  ApiReleaseEscrowAccessIdRoute: typeof ApiReleaseEscrowAccessIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -381,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoBetterAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhook': {
+      id: '/api/webhook'
+      path: '/api/webhook'
+      fullPath: '/api/webhook'
+      preLoaderRoute: typeof ApiWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/unread': {
       id: '/api/unread'
       path: '/api/unread'
@@ -395,11 +529,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStatsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/refund': {
+      id: '/api/refund'
+      path: '/api/refund'
+      fullPath: '/api/refund'
+      preLoaderRoute: typeof ApiRefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ping': {
       id: '/api/ping'
       path: '/api/ping'
       fullPath: '/api/ping'
       preLoaderRoute: typeof ApiPingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payout-methods': {
+      id: '/api/payout-methods'
+      path: '/api/payout-methods'
+      fullPath: '/api/payout-methods'
+      preLoaderRoute: typeof ApiPayoutMethodsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payment-settings': {
+      id: '/api/payment-settings'
+      path: '/api/payment-settings'
+      fullPath: '/api/payment-settings'
+      preLoaderRoute: typeof ApiPaymentSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/me': {
@@ -430,6 +585,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiConversationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/checkout': {
+      id: '/api/checkout'
+      path: '/api/checkout'
+      fullPath: '/api/checkout'
+      preLoaderRoute: typeof ApiCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/balance': {
+      id: '/api/balance'
+      path: '/api/balance'
+      fullPath: '/api/balance'
+      preLoaderRoute: typeof ApiBalanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_protected/onboarding': {
       id: '/_protected/onboarding'
       path: '/onboarding'
@@ -437,18 +606,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedOnboardingRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/messages': {
-      id: '/_protected/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof ProtectedMessagesRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
     '/_protected/me': {
       id: '/_protected/me'
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof ProtectedMeRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/inbox': {
+      id: '/_protected/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof ProtectedInboxRouteImport
       parentRoute: typeof ProtectedRoute
     }
     '/_protected/dashboard': {
@@ -472,6 +641,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAboutRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/inbox/': {
+      id: '/_protected/inbox/'
+      path: '/'
+      fullPath: '/inbox/'
+      preLoaderRoute: typeof ProtectedInboxIndexRouteImport
+      parentRoute: typeof ProtectedInboxRoute
+    }
+    '/api/release-escrow/$accessId': {
+      id: '/api/release-escrow/$accessId'
+      path: '/api/release-escrow/$accessId'
+      fullPath: '/api/release-escrow/$accessId'
+      preLoaderRoute: typeof ApiReleaseEscrowAccessIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/dm-access/$username': {
+      id: '/api/dm-access/$username'
+      path: '/api/dm-access/$username'
+      fullPath: '/api/dm-access/$username'
+      preLoaderRoute: typeof ApiDmAccessUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/creators/$username': {
       id: '/api/creators/$username'
       path: '/$username'
@@ -485,6 +675,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_protected/inbox/$username': {
+      id: '/_protected/inbox/$username'
+      path: '/$username'
+      fullPath: '/inbox/$username'
+      preLoaderRoute: typeof ProtectedInboxUsernameRouteImport
+      parentRoute: typeof ProtectedInboxRoute
     }
     '/api/conversations/$id/refund': {
       id: '/api/conversations/$id/refund'
@@ -503,12 +700,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ProtectedInboxRouteChildren {
+  ProtectedInboxUsernameRoute: typeof ProtectedInboxUsernameRoute
+  ProtectedInboxIndexRoute: typeof ProtectedInboxIndexRoute
+}
+
+const ProtectedInboxRouteChildren: ProtectedInboxRouteChildren = {
+  ProtectedInboxUsernameRoute: ProtectedInboxUsernameRoute,
+  ProtectedInboxIndexRoute: ProtectedInboxIndexRoute,
+}
+
+const ProtectedInboxRouteWithChildren = ProtectedInboxRoute._addFileChildren(
+  ProtectedInboxRouteChildren,
+)
+
 interface ProtectedRouteChildren {
   ProtectedAboutRoute: typeof ProtectedAboutRoute
   ProtectedCreatorsRoute: typeof ProtectedCreatorsRoute
   ProtectedDashboardRoute: typeof ProtectedDashboardRoute
+  ProtectedInboxRoute: typeof ProtectedInboxRouteWithChildren
   ProtectedMeRoute: typeof ProtectedMeRoute
-  ProtectedMessagesRoute: typeof ProtectedMessagesRoute
   ProtectedOnboardingRoute: typeof ProtectedOnboardingRoute
 }
 
@@ -516,8 +727,8 @@ const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedAboutRoute: ProtectedAboutRoute,
   ProtectedCreatorsRoute: ProtectedCreatorsRoute,
   ProtectedDashboardRoute: ProtectedDashboardRoute,
+  ProtectedInboxRoute: ProtectedInboxRouteWithChildren,
   ProtectedMeRoute: ProtectedMeRoute,
-  ProtectedMessagesRoute: ProtectedMessagesRoute,
   ProtectedOnboardingRoute: ProtectedOnboardingRoute,
 }
 
@@ -555,27 +766,36 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   LandingRoute: LandingRoute,
   LoginRoute: LoginRoute,
+  ApiBalanceRoute: ApiBalanceRoute,
+  ApiCheckoutRoute: ApiCheckoutRoute,
   ApiConversationsRoute: ApiConversationsRouteWithChildren,
   ApiCreatorsRoute: ApiCreatorsRouteWithChildren,
   ApiDevLoginRoute: ApiDevLoginRoute,
   ApiMeRoute: ApiMeRoute,
+  ApiPaymentSettingsRoute: ApiPaymentSettingsRoute,
+  ApiPayoutMethodsRoute: ApiPayoutMethodsRoute,
   ApiPingRoute: ApiPingRoute,
+  ApiRefundRoute: ApiRefundRoute,
   ApiStatsRoute: ApiStatsRoute,
   ApiUnreadRoute: ApiUnreadRoute,
+  ApiWebhookRoute: ApiWebhookRoute,
   DemoBetterAuthRoute: DemoBetterAuthRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiDmAccessUsernameRoute: ApiDmAccessUsernameRoute,
+  ApiReleaseEscrowAccessIdRoute: ApiReleaseEscrowAccessIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

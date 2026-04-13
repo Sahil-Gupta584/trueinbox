@@ -1,41 +1,41 @@
-import React, { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSession } from "../../lib/auth-client";
-import { api } from "../../lib/api";
-import { ArrowRight, User } from "lucide-react";
-import { Logo } from "../../components/logo";
+import React, { useState } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useSession } from '../../lib/auth-client'
+import { api } from '../../lib/api'
+import { ArrowRight, User } from 'lucide-react'
+import { Logo } from '../../components/logo'
 
 export const Route = createFileRoute('/_protected/onboarding')({
   component: Onboarding,
 })
 
 function Onboarding() {
-  const { data: session } = useSession();
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const { data: session } = useSession()
+  const navigate = useNavigate()
+  const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-    setLoading(true);
-    setError("");
+    e.preventDefault()
+    if (!name.trim()) return
+    setLoading(true)
+    setError('')
     try {
-      await api.updateMe({ name: name.trim() });
-      navigate({ to: "/me", search: { onboarding: "1" } as any });
+      await api.updateMe({ name: name.trim() })
+      navigate({ to: '/me', search: { onboarding: '1' } as any })
     } catch {
-      setError("Something went wrong. Try again.");
+      setError('Something went wrong. Try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="pt-6 flex items-center justify-center px-6">
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[180px] rounded-full blur-[80px] opacity-20 pointer-events-none"
-        style={{ background: "var(--primary)" }}
+        style={{ background: 'var(--primary)' }}
       />
 
       <div className="relative w-full max-w-sm">
@@ -43,9 +43,13 @@ function Onboarding() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-5">
             <Logo size={28} />
-            <span className=" font-bold text-foreground text-xl">TrueInbox</span>
+            <span className=" font-bold text-foreground text-xl">
+              TrueInbox
+            </span>
           </div>
-          <h1 className=" text-2xl font-bold text-foreground">What's your name?</h1>
+          <h1 className=" text-2xl font-bold text-foreground">
+            What's your name?
+          </h1>
           <p className="text-muted-foreground text-sm mt-2">
             This is how you'll appear to others on TrueInbox.
           </p>
@@ -85,16 +89,21 @@ function Onboarding() {
               {loading ? (
                 <div className="w-4 h-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
               ) : (
-                <>Continue <ArrowRight className="w-4 h-4" /></>
+                <>
+                  Continue <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           </form>
         </div>
 
         <p className="text-center text-xs text-muted-foreground mt-5">
-          Signed in as <span className="text-foreground font-medium">{session?.user?.email}</span>
+          Signed in as{' '}
+          <span className="text-foreground font-medium">
+            {session?.user?.email}
+          </span>
         </p>
       </div>
     </div>
-  );
+  )
 }

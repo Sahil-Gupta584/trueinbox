@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
+import type { VariantProps } from 'class-variance-authority'
 import { Slot } from 'radix-ui'
 import { Loader2 } from 'lucide-react'
 
@@ -66,7 +67,6 @@ function Button({
       data-size={size}
       disabled={disabled || isLoading}
       className={cn(buttonVariants({ variant, size, className }))}
-    
       {...props}
     >
       {isLoading && <Loader2 className="animate-spin" />}

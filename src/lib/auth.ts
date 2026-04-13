@@ -6,7 +6,7 @@ import { env } from './env'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
   }),
   baseURL: env.BASE_URL,
   emailAndPassword: {
@@ -17,6 +17,6 @@ export const auth = betterAuth({
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }
-  }
+    },
+  },
 })

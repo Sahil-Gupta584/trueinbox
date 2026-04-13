@@ -4,11 +4,10 @@ import {
   createRootRouteWithContext,
 } from '@tanstack/react-router'
 
-
-
 import appCss from '../styles.css?url'
 
-import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -46,7 +45,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
-        <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet"></link>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Geist:wght@300;400;500&display=swap"
+          rel="stylesheet"
+        ></link>
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
         <QueryClientProvider client={Route.useRouteContext().queryClient}>

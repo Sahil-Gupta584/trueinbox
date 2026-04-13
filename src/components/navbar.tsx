@@ -22,7 +22,7 @@ const tabRoutes = [
   },
   {
     value: 'inbox',
-    href: '/messages',
+    href: '/inbox',
     label: 'Inbox',
     icon: MessageSquareText,
   },
@@ -31,13 +31,13 @@ const tabRoutes = [
 
 const navRoutes = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/messages', label: 'Inbox', icon: MessageSquareText },
+  { href: '/inbox', label: 'Inbox', icon: MessageSquareText },
   { href: '/creators', label: 'Creators', icon: Users },
   { href: '/me', label: 'My Profile', icon: User },
 ]
 
 function getActiveTab(location: string): string {
-  if (location.startsWith('/messages')) return 'inbox'
+  if (location.startsWith('/inbox')) return 'inbox'
   if (location.startsWith('/creators')) return 'creators'
   if (location === '/dashboard' || location.startsWith('/dashboard'))
     return 'dashboard'
@@ -115,7 +115,7 @@ function UserDropdown() {
   const user = session?.user
 
   if (!user) {
-    return null
+    return <span></span>
   }
 
   const displayName = user.name || user.email.split('@')[0] || 'Account'
@@ -124,8 +124,9 @@ function UserDropdown() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl transition-all ${open ? 'bg-accent/10' : 'hover:bg-muted'
-          }`}
+        className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl transition-all ${
+          open ? 'bg-accent/10' : 'hover:bg-muted'
+        }`}
       >
         <Avatar name={user.name} image={user.image ?? null} size={30} />
         <span className="hidden sm:block text-sm font-medium text-foreground max-w-[120px] truncate">
@@ -159,15 +160,17 @@ function UserDropdown() {
             {navRoutes.map((route) => {
               const isActive =
                 location.pathname === route.href ||
-                (route.href !== '/dashboard' && location.pathname.startsWith(route.href))
+                (route.href !== '/dashboard' &&
+                  location.pathname.startsWith(route.href))
               return (
                 <Link key={route.href} to={route.href}>
                   <button
                     onClick={() => setOpen(false)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${isActive
-                      ? 'bg-accent/10 text-accent'
-                      : 'text-foreground hover:bg-muted'
-                      }`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                      isActive
+                        ? 'bg-accent/10 text-accent'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
                   >
                     <route.icon
                       className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}

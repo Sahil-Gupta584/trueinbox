@@ -17,7 +17,7 @@ function RouteComponent() {
   return (
     <div className="min-h-screen bg-[#faf9f7]">
       <Navbar />
-      <main className='max-w-4xl mx-auto p-6 mt-18'>
+      <main className="max-w-4xl mx-auto p-6 mt-18">
         <Outlet />
       </main>
     </div>

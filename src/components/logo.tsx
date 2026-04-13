@@ -1,9 +1,9 @@
 interface LogoProps {
-  size?: number;
-  className?: string;
+  size?: number
+  className?: string
 }
 
-export function Logo({ size = 28, className = "" }: LogoProps) {
+export function Logo({ size = 28, className = '' }: LogoProps) {
   return (
     <img
       src="/logo.png"
@@ -11,12 +11,12 @@ export function Logo({ size = 28, className = "" }: LogoProps) {
       height={size}
       referrerPolicy="no-referrer"
       className={`flex-shrink-0 rounded-full ${className}`}
-      style={{ objectFit: "contain" }}
+      style={{ objectFit: 'contain' }}
     />
-  );
+  )
 }
 
-export function LogoWithText({ size = 28, className = "" }: LogoProps) {
+export function LogoWithText({ size = 28, className = '' }: LogoProps) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Logo size={size} />
@@ -27,5 +27,5 @@ export function LogoWithText({ size = 28, className = "" }: LogoProps) {
         TrueInbox
       </span>
     </div>
-  );
+  )
 }

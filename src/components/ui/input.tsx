@@ -2,6 +2,14 @@ import * as React from 'react'
 
 import { cn } from '#/lib/utils'
 
+import { Field, FieldDescription, FieldLabel } from '#/components/ui/field'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from '#/components/ui/input-group'
+
 // Base input component - used by InputGroup
 export function BaseInput({
   className,
@@ -20,14 +28,6 @@ export function BaseInput({
     />
   )
 }
-
-import { Field, FieldDescription, FieldLabel } from '#/components/ui/field'
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText,
-} from '#/components/ui/input-group'
 
 export function Input({
   className,

@@ -15,8 +15,8 @@ export const Route = createFileRoute('/api/me')({
           .select()
           .from(userSchema)
           .where(eq(userSchema.id, session.user.id))
-          console.log({result});
-          
+        console.log({ result })
+
         return Response.json(result[0] || null)
       },
       PATCH: async ({ request }) => {
