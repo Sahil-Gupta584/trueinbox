@@ -54,10 +54,8 @@ export const Route = createFileRoute('/api/dm-access/$username')({
             )
           )
           .limit(1)
-        console.log({ paymentRecordQuery });
 
         const paymentRecord = paymentRecordQuery[0]
-        console.log({paymentRecord});
         
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!paymentRecord) {
