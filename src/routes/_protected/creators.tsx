@@ -214,7 +214,7 @@ function Creators() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const inviteLink = `${window.location.origin}?utm_source=invite&utm_medium=referral&utm_campaign=creator_invite&utm_content=${user.username || user.id}`
+  const inviteLink = `${window.location.origin}?referral=${user.username || user.id}`
 
   const handleCopyLink = async () => {
     try {

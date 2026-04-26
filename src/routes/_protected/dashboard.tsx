@@ -106,13 +106,22 @@ function Dashboard() {
     <div className="w-full pt-14">
       {/* Header */}
       <div className="mb-8 animate-fade-up">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-3 mb-1">
+          <Avatar name={session?.user.name ?? null} image={session?.user.image ?? null} size="md" />
           <h1 className=" text-2xl font-['Lora'] font-medium text-foreground">
             Hey, {displayName}
-            <span style={{ fontSize: '22px' }}>🌟</span>
+            <span style={{ fontSize: "22px" }}>🌟</span>
           </h1>
+          {session?.user.username && (
+            <Link 
+              to={`/profile/${session.user.username}`} 
+              className="ml-auto text-xs font-medium text-primary hover:underline flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-full border border-primary/10 transition-colors"
+            >
+               View Public Profile <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
         </div>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-sm ml-[52px]">
           Here's what's happening in your inbox today.
         </p>
       </div>

@@ -5,7 +5,7 @@
 @import '@fontsource-variable/montserrat';
 @import '@fontsource-variable/space-grotesk';
 
-@custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.dark *)); */
 @plugin "@tailwindcss/typography";
 
 @theme {
@@ -86,6 +86,7 @@ body {
   overflow-x: hidden;
 }
 
+/*
 .dark {
   --background: oklch(0.153 0.006 107.1);
   --foreground: oklch(0.988 0.003 106.5);
@@ -119,6 +120,7 @@ body {
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.58 0.031 107.3);
 }
+*/
 
 @theme inline {
   --font-sans: 'Montserrat Variable', sans-serif;

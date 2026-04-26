@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { signIn, useSession } from '../lib/auth-client'
-import { Mail, ArrowRight, Inbox, CheckCircle, Sparkles } from 'lucide-react'
+import { Mail, ArrowRight, Inbox, CheckCircle, Sparkles, User } from 'lucide-react'
 import { Logo } from '../components/logo'
 import { Button } from '#/components/ui/button'
 
@@ -14,6 +14,7 @@ export const Route = createFileRoute('/login')({
 function SignIn() {
   const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const { data: session, isPending } = useSession()
@@ -50,6 +51,7 @@ function SignIn() {
       // Assuming signIn.magicLink is used for magic links in better-auth
       const res = await signIn.magicLink({
         email,
+        name,
         callbackURL: '/me',
       })
 
@@ -151,22 +153,42 @@ function SignIn() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                  Email address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="you@example.com"
-                    autoFocus
-                    style={{ paddingLeft: '2.75rem' }}
-                    className="w-full pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all"
-                  />
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                      placeholder="Your Name"
+                      style={{ paddingLeft: '2.75rem' }}
+                      className="w-full pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    Email address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                      placeholder="you@example.com"
+                      autoFocus
+                      style={{ paddingLeft: '2.75rem' }}
+                      className="w-full pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all"
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import landingStyleUrl from './-components/landing.style.css?url'
+import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute('/landing')({
   component: TrueInboxLanding,
@@ -67,7 +68,9 @@ function TrueInboxLanding() {
             <a href="#pricing">Pricing</a>
           </li>
         </ul>
-        <button className="nav-cta">Get Early Access</button>
+        <a href="/dashboard">
+          <button className="nav-cta">Dashboard</button>
+        </a>
       </nav>
       {/* HERO */}
       <div
@@ -220,66 +223,104 @@ function TrueInboxLanding() {
               <div className="phone-wrap">
                 <div className="phone-header">
                   <span className="phone-back">‹</span>
-                  <div className="phone-av">🏢</div>
+                  <img
+                    src="https://pbs.twimg.com/profile_images/1996831016720486400/vycHz0uG_400x400.jpg"
+                    className="w-8 h-8 rounded-full object-cover"
+                    alt="levelsio's Avatar"
+                  />
                   <div className="phone-info">
-                    <div className="phone-name">Lume Skincare</div>
-                    <div className="phone-status">Sponsor · Verified</div>
+                    <div className="phone-name">levelsio</div>
+                    <div className="phone-status">Fan · Paid DM</div>
                   </div>
-                  <div className="phone-verified">✓ Verified</div>
+                  <div className="phone-verified">✓ Guaranteed</div>
                 </div>
-                <div className="chat-body">
-                  <div className="date-sep">Today</div>
-                  <div className="deposit-chip">
-                    <div className="chip-icon">🔒</div>
-                    <div>
-                      Sponsor placed a <strong>$25 deposit</strong> to message
-                      you. Refunded on reply.
+                <div
+                  className="chat-body"
+                  style={{
+                    padding: '0',
+                    background: '#fafaf9',
+                    backgroundImage:
+                      'radial-gradient(#e7e5e4 1px, transparent 1px)',
+                    backgroundSize: '20px 20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                    paddingTop: '16px',
+                    paddingBottom: '16px',
+                  }}
+                >
+                  <div className="flex items-center justify-center my-1">
+                    <span className="text-[10px] text-stone-400 bg-white px-2 py-0.5 rounded-full border border-stone-200">
+                      Today
+                    </span>
+                  </div>
+
+                  {/* Payment chip */}
+                  <div className="flex justify-center mb-2 mt-1">
+                    <div
+                      className="rounded-xl bg-white shadow-sm p-2 border border-stone-200 text-center mx-3"
+                      style={{ width: 'calc(100% - 24px)' }}
+                    >
+                      <div className="text-stone-500 text-[11px] flex items-center justify-center gap-1.5">
+                        <span>
+                          <strong>Alex</strong> made a payment of
+                        </span>
+                        <span className="font-medium text-green-600">
+                          $50.00
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="bubble bubble-them">
-                    Hey! We've been following your content for a while and would
-                    love to discuss a paid partnership for our new Vitamin C
-                    serum launch 🌿
+
+                  {/* Message them (Fan) */}
+                  <div className="flex justify-end">
+                    <div className="max-w-[85%] flex flex-col gap-0.5 items-end px-3">
+                      <div className="px-3 py-2 rounded-2xl text-[13px] leading-relaxed shadow-sm bg-emerald-600 text-white rounded-br-sm">
+                        Hey levelsio! Building an AI dev tool and struggling
+                        with our GTM strategy for early enterprise pilots.
+                      </div>
+                      <span className="text-[9px] px-1 text-stone-400">
+                        9:41 AM
+                      </span>
+                    </div>
                   </div>
-                  <div className="date-sep bubble-time">9:41 AM</div>
-                  <div className="bubble bubble-them">
-                    Budget is $6,000 for one dedicated post + stories. Let us
-                    know if you're open to it!
+
+                  <div className="flex justify-end">
+                    <div className="max-w-[85%] flex flex-col gap-0.5 items-end px-3">
+                      <div className="px-3 py-2 rounded-2xl text-[13px] leading-relaxed shadow-sm bg-emerald-600 text-white rounded-br-sm">
+                        Should we target individual devs first or go straight to
+                        engineering managers? Happy to pay for your thoughts!
+                      </div>
+                      <span className="text-[9px] px-1 text-stone-400">
+                        9:42 AM
+                      </span>
+                    </div>
                   </div>
-                  <div className="date-sep bubble-time">9:42 AM</div>
-                  <div className="bubble bubble-me">
-                    Hi! Yes this sounds great — would love to chat. Thursday
-                    works perfectly 🙌
+
+                  {/* Refund chip */}
+                  <div className="flex items-center justify-center my-2">
+                    <div className="text-[10px] text-stone-500 bg-stone-100 px-3 py-1.5 rounded-full border border-emerald-200 text-center mx-3 leading-tight">
+                      🎉 levelsio issued the refund of{' '}
+                      <span className="font-medium text-emerald-600">
+                        $50.00
+                      </span>{' '}
+                      at 10:05 AM 🎉
+                    </div>
                   </div>
-                  <div
-                    className="date-sep bubble-time right"
-                    style={{ alignSelf: 'flex-end' }}
-                  >
-                    You · 10:05 AM
+
+                  {/* Message me (Creator) */}
+                  <div className="flex justify-start">
+                    <div className="max-w-[85%] flex flex-col gap-0.5 items-start px-3">
+                      <div className="px-3 py-2 rounded-2xl text-[13px] leading-relaxed shadow-sm bg-white text-stone-800 rounded-bl-sm border border-stone-200">
+                        Hey Alex! Start with individual devs. Get them to
+                        champion your tool internally. Top-down enterprise sales
+                        are too slow for early stage. Good luck! 🚀
+                      </div>
+                      <span className="text-[9px] px-1 text-stone-400">
+                        10:05 AM
+                      </span>
+                    </div>
                   </div>
-                  <div className="typing-indicator">
-                    <div className="typing-dot" />
-                    <div className="typing-dot" />
-                    <div className="typing-dot" />
-                  </div>
-                </div>
-              </div>
-              <div className="badge-float badge-float-1">
-                <div className="badge-icon" style={{ background: '#e8f5ef' }}>
-                  💸
-                </div>
-                <div>
-                  <div className="badge-label">Deal incoming</div>
-                  <div className="badge-val">$6,000 offer 🎉</div>
-                </div>
-              </div>
-              <div className="badge-float badge-float-2">
-                <div className="badge-icon" style={{ background: '#fde8e8' }}>
-                  🚫
-                </div>
-                <div>
-                  <div className="badge-label">Filtered today</div>
-                  <div className="badge-val">1,243 spam DMs</div>
                 </div>
               </div>
             </div>
@@ -420,10 +461,8 @@ function TrueInboxLanding() {
             </p>
           </div>
           <div
-            className="reveal"
+            className="reveal grid md:grid-cols-2"
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
               gap: 16,
               maxWidth: 1040,
               margin: '0 auto',
@@ -437,8 +476,13 @@ function TrueInboxLanding() {
                 borderRadius: 20,
                 overflow: 'hidden',
               }}
+              className='flex flex-col'
             >
-              <div style={{ padding: '32px 32px 24px' }}>
+              <div style={{
+                padding: '32px 32px 24px',
+                height: '50%',
+
+              }}>
                 <div
                   style={{
                     width: 44,
@@ -492,11 +536,13 @@ function TrueInboxLanding() {
                   into a signal-only channel — every message that reaches you
                   has already paid for your time.
                   <br />
-                  <span >
-                    Clean inbox for your sponsorships,  friends and family DMs.
+                  <span>
+                    Clean inbox for your sponsorships, friends and family DMs.
                   </span>
                   <br />
-                  <span className="italic text-foreground">Make it free via refunds!</span>
+                  <span className="italic text-foreground">
+                    Make it free via refunds!
+                  </span>
                 </p>
               </div>
               <div
@@ -507,6 +553,7 @@ function TrueInboxLanding() {
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 14,
+                  flexGrow: 1,
                 }}
               >
                 <div
@@ -647,8 +694,13 @@ function TrueInboxLanding() {
                 borderRadius: 20,
                 overflow: 'hidden',
               }}
+              className='flex flex-col'
             >
-              <div style={{ padding: '32px 32px 24px' }}>
+              <div style={{
+                padding: '32px 32px 24px',
+                height: '50%',
+
+              }}>
                 <div
                   style={{
                     width: 44,
@@ -716,6 +768,7 @@ function TrueInboxLanding() {
                   flexDirection: 'column',
                   gap: 14,
                 }}
+                className='grow-span-2 h'
               >
                 <div
                   style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}
@@ -1269,7 +1322,7 @@ function TrueInboxLanding() {
               type="email"
               placeholder="your@email.com"
             />
-            <button className="email-btn">Get Early Access</button>
+            <button className="email-btn">DashBoard</button>
           </div>
         </div>
       </div>

@@ -221,9 +221,9 @@ export function DashboardMockup() {
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-5 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-[8px] font-bold text-primary">
-              J
+              L
             </div>
-            <span className="text-[9px] text-muted-foreground">Jamie</span>
+            <span className="text-[9px] text-muted-foreground">@levelsio</span>
           </div>
         </div>
         {/* Body */}

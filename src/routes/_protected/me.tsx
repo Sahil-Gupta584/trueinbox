@@ -658,7 +658,7 @@ function ProfileSettings() {
                 <FieldLabel>{p.label}</FieldLabel>
                 <InputGroup>
                   <InputGroupAddon>
-                    <p.icon className="text-stone-400 size-4" />
+                    <p.icon className="text-stone-400 size-3.5" />
                   </InputGroupAddon>
                   <InputGroupInput
                     value={form[p.key]}

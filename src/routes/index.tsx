@@ -34,14 +34,14 @@ function Landing() {
       <Navbar />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-[100svh] pt-28 pb-24 overflow-hidden flex items-center">
+      <section className="relative min-h-[100svh] pt-36 pb-32 overflow-hidden flex items-center">
         <div className="absolute inset-x-0 top-0 h-40 pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-6 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] items-center gap-14 lg:gap-20">
             {/* Left — copy */}
             <div className="flex-1 w-full text-center lg:text-left">
-              <Badge className="mb-4">
+              <Badge className="mb-8">
                 <Sparkles className="size-2" />
                 0% platform fee, every dollar to creators
               </Badge>

@@ -7,7 +7,7 @@ export const requireAuth = createMiddleware().server(
       const session = await auth.api.getSession({ headers: request.headers })
 
       const publicRoutes = ['/api/auth', '/login', '/api/webhook']
-      if (publicRoutes.some((route) => pathname.startsWith(route))) {
+      if (pathname==='/landing'||pathname==='/'||publicRoutes.some((route) => pathname.startsWith(route))) {
         return next()
       }
 

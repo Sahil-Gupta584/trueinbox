@@ -2,8 +2,9 @@ import { createServerFn } from '@tanstack/react-start'
 import { createAuthClient } from 'better-auth/react'
 import { getRequestHeaders } from '@tanstack/react-start/server'
 import { auth } from './auth'
+import { magicLinkClient } from "better-auth/client/plugins";
 
-export const authClient = createAuthClient()
+export const authClient = createAuthClient({ plugins: [magicLinkClient()] })
 export const { useSession, signIn, signOut } = authClient
 export const getSession = createServerFn({ method: 'GET' }).handler(
   async () => {
