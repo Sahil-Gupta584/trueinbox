@@ -28,6 +28,7 @@ import { PaymentButtons } from '#/components/PaymentButtons'
 import { Kbd, KbdGroup } from '#/components/ui/kbd'
 import { Spinner } from '#/components/ui/spinner'
 import { useQuery } from '@tanstack/react-query'
+import { Checkbox } from '#/components/ui/checkbox'
 
 export const Route = createFileRoute('/_protected/inbox/$username')({
   component: ChatPage,
@@ -463,7 +464,7 @@ function ChatPage() {
           backgroundSize: '20px 20px',
         }}
       >
-        {access && isReceiver && access.amountPaid > 0 && access.type === 'paywall' &&  (
+        {access && isReceiver && access.amountPaid > 0 && access.type === 'paywall' && (
           <div className="rounded-xl bg-white shadow p-2 border text-center max-w-md w-full">
             <div className="text-stone-500 text-sm flex items-center justify-center gap-2">
               <Avatar name={fan.name} image={fan.image} size="sm" />
@@ -500,7 +501,7 @@ function ChatPage() {
                     <span className="font-medium text-emerald-600">
                       ${((msg.amount || 0) / 100).toFixed(2)}
                     </span>{' '}
-                    at {formatTime(msg.createdAt)} 🎉 
+                    at {formatTime(msg.createdAt)} 🎉
                   </div>
                 </div>
               )
@@ -531,8 +532,8 @@ function ChatPage() {
                   >
                     <div
                       className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm ${isMe
-                          ? 'bg-emerald-600 text-white rounded-br-sm'
-                          : 'bg-white text-stone-800 rounded-bl-sm border border-stone-200'
+                        ? 'bg-emerald-600 text-white rounded-br-sm'
+                        : 'bg-white text-stone-800 rounded-bl-sm border border-stone-200'
                         }`}
                     >
                       {msg.content}
@@ -570,19 +571,15 @@ function ChatPage() {
               !refund.refundedAt &&
               !accessStatus.conversation?.creatorReplied && (
                 <div className="mb-2 flex items-center gap-2">
-                  <input
-                    id="refund-checkbox"
-                    type="checkbox"
+                  <Checkbox
                     checked={refundChecked}
-                    onChange={(e) => setRefundChecked(e.target.checked)}
-                    className="accent-emerald-600 h-4 w-4"
+                    onCheckedChange={(s) => setRefundChecked(Boolean(s))}
                   />
                   <label
                     htmlFor="refund-checkbox"
                     className="text-xs text-stone-700 select-none cursor-pointer"
                   >
-                    Make refund (show goodwill, fan will see analytics refund—no
-                    money removed)
+                    Make refund
                   </label>
                 </div>
               )}

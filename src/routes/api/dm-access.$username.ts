@@ -12,7 +12,11 @@ export const Route = createFileRoute('/api/dm-access/$username')({
 
         const myId = session.user.id
         const { username } = params
-        const user2 = await db.select().from(user).where(eq(user.username, username)).then(res => res[0])
+        console.log({username});
+        
+        const user2 = await db.select().from(user).where(or(eq(user.username, username),eq(user.id, username))).then(res => res[0])
+        console.log({user2});
+        
         if (!user2) {
           return Response.json({ message: 'Creator not found' }, { status: 404 })
         }

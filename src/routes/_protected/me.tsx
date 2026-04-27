@@ -691,7 +691,7 @@ function ProfileSettings() {
         </SectionCard>
 
         {/* Balance */}
-        <SectionCard
+        {/* <SectionCard
           icon="💰"
           title="Your Balance"
           subtitle="Track your earnings from paid DMs."
@@ -702,7 +702,6 @@ function ProfileSettings() {
             </div>
           ) : balanceData ? (
             <div className="space-y-4">
-              {/* Balance Cards */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-4">
                   <div className="flex items-center gap-2 mb-1">
@@ -734,7 +733,6 @@ function ProfileSettings() {
                 </div>
               </div>
 
-              {/* Stats Row */}
               <div className="flex items-center justify-between text-xs text-stone-500 px-1">
                 <span>
                   Total earned:{' '}
@@ -750,14 +748,12 @@ function ProfileSettings() {
                 </span>
               </div>
 
-              {/* Payout info */}
               {!payoutMethods?.length && (
                 <p className="text-xs text-amber-600 text-center">
                   Add a payout method below to receive monthly payouts
                 </p>
               )}
 
-              {/* Recent Transactions */}
               {balanceData.transactions.length > 0 && (
                 <div className="border-t border-stone-200 pt-4 mt-4">
                   <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
@@ -827,16 +823,14 @@ function ProfileSettings() {
           ) : (
             <p className="text-sm text-stone-500">Unable to load balance</p>
           )}
-        </SectionCard>
+        </SectionCard> */}
 
-        {/* Payout Methods */}
-        <SectionCard
+        {/*<SectionCard
           icon="🏦"
           title="Payout Methods"
           subtitle="Add a bank account, UPI, or PayPal to receive withdrawals."
         >
           <div className="space-y-4">
-            {/* Existing Payout Methods */}
             {payoutMethodsLoading ? (
               <div className="flex items-center justify-center py-4">
                 <Loader2 className="w-5 h-5 animate-spin text-stone-400" />
@@ -917,7 +911,6 @@ function ProfileSettings() {
               </div>
             ) : null}
 
-            {/* Add Payout Method */}
             {!showAddPayoutMethod ? (
               <button
                 onClick={() => setShowAddPayoutMethod(true)}
@@ -945,7 +938,6 @@ function ProfileSettings() {
                   </button>
                 </div>
 
-                {/* Method Type Selection */}
                 {!payoutMethodType ? (
                   <div className="grid grid-cols-2 gap-2">
                     {[
@@ -993,7 +985,6 @@ function ProfileSettings() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* Form fields based on method type */}
                     {payoutMethodType === 'bank_us' && (
                       <>
                         <Field>
@@ -1242,7 +1233,6 @@ function ProfileSettings() {
               </div>
             )}
 
-            {/* Info text */}
             {!payoutMethods?.length && !showAddPayoutMethod && (
               <p className="text-xs text-stone-400 leading-relaxed">
                 Add a payout method to receive your earnings. We support bank
@@ -1250,7 +1240,7 @@ function ProfileSettings() {
               </p>
             )}
           </div>
-        </SectionCard>
+        </SectionCard> *\}
 
         {/* Danger zone */}
         <details className="group">

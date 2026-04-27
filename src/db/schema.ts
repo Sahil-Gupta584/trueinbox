@@ -1,13 +1,15 @@
 import * as t from 'drizzle-orm/pg-core'
 import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
 
-export const todos = pgTable('todos', {
+export const mySchema = t.pgSchema("trueinbox");
+
+export const todos = mySchema.table('todos', {
   id: serial().primaryKey(),
   title: text().notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 })
 
-export const user = pgTable('user', {
+export const user = mySchema.table('user', {
   id: t.text('id').primaryKey(),
   name: t.text('name').notNull(),
   email: t.varchar('email', { length: 255 }).notNull().unique(),
@@ -35,7 +37,7 @@ export const user = pgTable('user', {
 })
 
 // Separate table for user payment settings (payout configuration)
-export const userPaymentSettings = pgTable('user_payment_settings', {
+export const userPaymentSettings = mySchema.table('user_payment_settings', {
   id: t.text('id').primaryKey(),
   userId: t
     .text('user_id')
@@ -69,7 +71,7 @@ export const userPaymentSettings = pgTable('user_payment_settings', {
 
 // DM Access - tracks who has paid to message whom
 // This is the source of truth for whether a user can send messages to a creator
-export const dmAccess = pgTable('dm_access', {
+export const dmAccess = mySchema.table('dm_access', {
   id: t.text('id').primaryKey(),
   // The user who paid (sender/fan)
   senderId: t
@@ -114,7 +116,7 @@ export const dmAccess = pgTable('dm_access', {
 })
 
 // Payment records for tracking all payment transactions
-export const payment = pgTable('payment', {
+export const payment = mySchema.table('payment', {
   id: t.text('id').primaryKey(),
   // Who paid and who received
   senderId: t
@@ -150,7 +152,7 @@ export const payment = pgTable('payment', {
 })
 
 // Conversation between users
-export const conversation = pgTable('conversation', {
+export const conversation = mySchema.table('conversation', {
   id: t.text('id').primaryKey(),
   senderId: t
     .text('sender_id')
@@ -181,7 +183,7 @@ export const conversation = pgTable('conversation', {
     .notNull(),
 })
 
-export const message = pgTable('message', {
+export const message = mySchema.table('message', {
   id: t.text('id').primaryKey(),
   conversationId: t
     .text('conversation_id')
@@ -198,7 +200,7 @@ export const message = pgTable('message', {
     .notNull(),
 })
 
-export const session = pgTable('session', {
+export const session = mySchema.table('session', {
   id: t.text('id').primaryKey(),
   userId: t
     .text('user_id')
@@ -217,7 +219,7 @@ export const session = pgTable('session', {
     .timestamp('updated_at', { precision: 6, withTimezone: true })
     .notNull(),
 })
-export const account = pgTable('account', {
+export const account = mySchema.table('account', {
   id: t.text('id').primaryKey(),
   userId: t
     .text('user_id')
@@ -246,7 +248,7 @@ export const account = pgTable('account', {
     .notNull(),
 })
 
-export const verification = pgTable('verification', {
+export const verification = mySchema.table('verification', {
   id: t.text('id').primaryKey(),
   identifier: t.text('identifier').notNull(),
   value: t.text('value').notNull(),
@@ -263,7 +265,7 @@ export const verification = pgTable('verification', {
 
 // Creator balance - tracks earnings for each creator
 // Money is held in TrueInbox's account, this tracks what each creator is owed
-export const creatorBalance = pgTable('creator_balance', {
+export const creatorBalance = mySchema.table('creator_balance', {
   id: t.text('id').primaryKey(),
   userId: t
     .text('user_id')
@@ -285,7 +287,7 @@ export const creatorBalance = pgTable('creator_balance', {
 })
 
 // Creator payout methods - bank accounts, UPI, PayPal where creators receive money
-export const creatorPayoutMethod = pgTable('creator_payout_method', {
+export const creatorPayoutMethod = mySchema.table('creator_payout_method', {
   id: t.text('id').primaryKey(),
   userId: t
     .text('user_id')
@@ -320,7 +322,7 @@ export const creatorPayoutMethod = pgTable('creator_payout_method', {
 })
 
 // Payout records - tracks all withdrawals/payouts to creators
-export const payout = pgTable('payout', {
+export const payout = mySchema.table('payout', {
   id: t.text('id').primaryKey(),
   // Creator receiving the payout
   userId: t
@@ -363,7 +365,7 @@ export const payout = pgTable('payout', {
 })
 
 // Balance transactions - ledger of all balance changes
-export const balanceTransaction = pgTable('balance_transaction', {
+export const balanceTransaction = mySchema.table('balance_transaction', {
   id: t.text('id').primaryKey(),
   userId: t
     .text('user_id')

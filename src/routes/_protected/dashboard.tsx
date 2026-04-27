@@ -121,7 +121,7 @@ function Dashboard() {
             </Link>
           )}
         </div>
-        <p className="text-muted-foreground text-sm ml-[52px]">
+        <p className="text-muted-foreground text-sm ml-2 mt-2">
           Here's what's happening in your inbox today.
         </p>
       </div>

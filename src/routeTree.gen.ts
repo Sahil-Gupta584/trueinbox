@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as LandingRouteImport } from './routes/landing'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
@@ -47,11 +46,6 @@ import { Route as ApiConversationsIdMessagesRouteImport } from './routes/api/con
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LandingRoute = LandingRouteImport.update({
-  id: '/landing',
-  path: '/landing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProtectedRoute = ProtectedRouteImport.update({
@@ -219,7 +213,6 @@ const ApiConversationsIdMessagesRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/about': typeof ProtectedAboutRoute
   '/creators': typeof ProtectedCreatorsRoute
@@ -254,7 +247,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/about': typeof ProtectedAboutRoute
   '/creators': typeof ProtectedCreatorsRoute
@@ -290,7 +282,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteWithChildren
-  '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/_protected/about': typeof ProtectedAboutRoute
   '/_protected/creators': typeof ProtectedCreatorsRoute
@@ -327,7 +318,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/landing'
     | '/login'
     | '/about'
     | '/creators'
@@ -362,7 +352,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/landing'
     | '/login'
     | '/about'
     | '/creators'
@@ -397,7 +386,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_protected'
-    | '/landing'
     | '/login'
     | '/_protected/about'
     | '/_protected/creators'
@@ -434,7 +422,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRoute: typeof ProtectedRouteWithChildren
-  LandingRoute: typeof LandingRoute
   LoginRoute: typeof LoginRoute
   ApiBalanceRoute: typeof ApiBalanceRoute
   ApiCheckoutRoute: typeof ApiCheckoutRoute
@@ -464,13 +451,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/landing': {
-      id: '/landing'
-      path: '/landing'
-      fullPath: '/landing'
-      preLoaderRoute: typeof LandingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_protected': {
@@ -764,7 +744,6 @@ const ApiCreatorsRouteWithChildren = ApiCreatorsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRoute: ProtectedRouteWithChildren,
-  LandingRoute: LandingRoute,
   LoginRoute: LoginRoute,
   ApiBalanceRoute: ApiBalanceRoute,
   ApiCheckoutRoute: ApiCheckoutRoute,

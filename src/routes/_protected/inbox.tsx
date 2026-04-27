@@ -183,6 +183,8 @@ function InboxLayout() {
           ) : (
             <div className="divide-y divide-stone-100">
               {filtered.map((conv) => {
+                console.log({conv});
+                
                 const isActive =
                   currentUsername === conv.other?.username ||
                   currentUsername === conv.other?.id

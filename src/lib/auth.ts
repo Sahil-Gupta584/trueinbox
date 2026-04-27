@@ -5,16 +5,21 @@ import { magicLink } from 'better-auth/plugins'
 import { Resend } from 'resend'
 import { db } from '#/db'
 import { env } from './env'
-
+import * as schema from '#/db/schema.ts'
 const resend = new Resend(env.RESEND_API_KEY)
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
+    schema: {
+      user: schema.user,
+      session: schema.session,
+      account: schema.account,
+      verification: schema.verification,
+    }
   }),
   baseURL: env.BASE_URL,
   plugins: [
-    tanstackStartCookies(),
     magicLink({
       sendMagicLink: async ({ email, url }) => {
         console.log('b');
@@ -33,6 +38,7 @@ export const auth = betterAuth({
 
       },
     }),
+    // tanstackStartCookies(),
   ],
   socialProviders: {
     google: {
